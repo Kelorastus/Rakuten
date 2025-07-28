@@ -13,3 +13,13 @@
 2. For example, to add pandas to the virtual environment, run `pip install pandas`.
 3. Update the requirements file: `pip freeze > requirements.txt`.
 4. Commit `requirements.txt` and push.
+
+## Contributing guidelines
+
+Éviter de travailler à plusieurs en même temps sur :
+- le même notebook
+- la même branche.
+
+Si on veut travailler à plusieurs sur la même tâche d'un notebook, il vaut mieux créer chacun un notebook avec un nom différent, puis envisager de les réunir après coup en un seul notebook.
+
+Chacun travaille dans sa branche. Faire un merge entre sa branche et main régulièrement (environ une fois par semaine) puis supprimer et recréer sa branche à partir de main. (Pour éviter d'avoir à faire un merge monstrueux si on a des branches trop différentes.)
