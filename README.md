@@ -12,7 +12,8 @@
 1. Activate the virtual environment (if not yet done in the current terminal): from the folder of this repository, run `source venv/bin/activate`.
 2. For example, to add pandas to the virtual environment, run `pip install pandas`.
 3. Update the requirements file: `pip freeze > requirements.txt`.
-4. Commit `requirements.txt` and push.
+4. Commit `requirements.txt` to main and push.
+5. Tell your collaborators: "Please pull main, then run (from the repository folder) the commands `source venv/bin/activate` then `pip install -r requirements.txt`."
 
 ## Contributing guidelines
 
