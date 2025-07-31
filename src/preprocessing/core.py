@@ -37,10 +37,10 @@ def load_extended_df(path='../../Dataset2/df.parquet'):
     # À quel point la partie non blanche est en format paysage plutôt que portrait.
     df['essential_aspect_ratio'] = df.essential_width / df.essential_height
 
-    # Aire de la partie non blanche.
+    # Aire du rectangle délimitant la partie non blanche.
     df['essential_area'] = df.essential_width * df.essential_height
 
-    # Mesure à quel point la partie non blanche ressemble à un rectangle plein.
+    # Mesure à quel point la partie non blanche remplit son rectangle délimitant.
     df['rectangleness'] = df.essential_pixel_count / df.essential_area
 
     return df
