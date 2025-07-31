@@ -24,3 +24,17 @@
 Si on veut travailler à plusieurs sur la même tâche d'un notebook, il vaut mieux créer chacun un notebook avec un nom différent, puis envisager de les réunir après coup en un seul notebook.
 
 Chacun travaille dans sa branche. Faire un merge entre sa branche et main régulièrement (environ une fois par semaine) puis supprimer et recréer sa branche à partir de main. (Pour éviter d'avoir à faire un merge monstrueux si on a des branches trop différentes.)
+
+### Si difficulté à push main
+
+Si quelqu'un a fait un ou des commits sur main sans avoir fetch la dernière version de main, ça peut poser problème.
+Alors la procédure suivante peut servir :
+- créer une branche qui a les commits que la personne veut push
+- faire des commits sur cette branche si il y a encore des changements importants non committed (pour bien les sauvegarder)
+- push cette branche
+- revenir sur main
+- `git fetch origin`
+- `git reset --hard origin/main` (c'est une commande irréversible qui réinitialise la branche main du PC de la personne pour qu'elle soit pareil que la branche main de Github)
+- puis merge la branche personnelle vers main
+- push main
+- supprimer la branche personnelle du PC de la personne et du remote origin (Github) (comme recommandé après chaque merge).
