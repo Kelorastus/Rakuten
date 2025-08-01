@@ -7,7 +7,7 @@
 3. Activate it: `source venv/bin/activate`.
 4. Install dependencies: `pip install -r requirements.txt`.
 
-## To install new dependencies
+## To add new dependencies
 
 1. Activate the virtual environment (if not yet done in the current terminal): from the folder of this repository, run `source venv/bin/activate`.
 2. For example, to add pandas to the virtual environment, run `pip install pandas`.
