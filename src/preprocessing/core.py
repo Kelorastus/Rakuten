@@ -1,4 +1,5 @@
 import pandas as pd
+from joblib import Parallel, delayed
 
 
 def load_extended_df(path='../../Dataset2/df.parquet'):
@@ -45,3 +46,27 @@ def load_extended_df(path='../../Dataset2/df.parquet'):
 
     return df
 
+
+def parallel_feature_creation(df, f, verbose=1):
+    '''
+    Applique f en parallèle (pour la rapidité) à chaque ligne de df.
+    Retourne un dataframe `features_df` avec le résultat.
+    Envisager ensuite `df.join(features_df)`.
+    '''
+
+    print("Démarrage de l'extraction de features en parallèle...")
+
+    # n_jobs=-1 utilise tous les coeurs disponibles
+    # backend="loky" est plus robuste pour les processus complexes
+    results = Parallel(n_jobs=-1, backend="loky", verbose=verbose)(
+        delayed(f)(row) for row in df.itertuples(index=False)
+    )
+    print("Extraction terminée.")
+
+    features_df = pd.DataFrame(results, index=df.index)
+
+    features_df.info()
+
+    print("Envisager `df = df.join(features_df)`.")
+
+    return features_df
