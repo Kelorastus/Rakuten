@@ -1,4 +1,5 @@
 import pandas as pd
+from joblib import Parallel, delayed
 
 
 def load_extended_df(path='../../Dataset2/df.parquet'):
@@ -37,11 +38,35 @@ def load_extended_df(path='../../Dataset2/df.parquet'):
     # À quel point la partie non blanche est en format paysage plutôt que portrait.
     df['essential_aspect_ratio'] = df.essential_width / df.essential_height
 
-    # Aire de la partie non blanche.
+    # Aire du rectangle délimitant la partie non blanche.
     df['essential_area'] = df.essential_width * df.essential_height
 
-    # Mesure à quel point la partie non blanche ressemble à un rectangle plein.
+    # Mesure à quel point la partie non blanche remplit son rectangle délimitant.
     df['rectangleness'] = df.essential_pixel_count / df.essential_area
 
     return df
 
+
+def parallel_feature_creation(df, f, verbose=1):
+    '''
+    Applique f en parallèle (pour la rapidité) à chaque ligne de df.
+    Retourne un dataframe `features_df` avec le résultat.
+    Envisager ensuite `df.join(features_df)`.
+    '''
+
+    print("Démarrage de l'extraction de features en parallèle...")
+
+    # n_jobs=-1 utilise tous les coeurs disponibles
+    # backend="loky" est plus robuste pour les processus complexes
+    results = Parallel(n_jobs=-1, backend="loky", verbose=verbose)(
+        delayed(f)(row) for row in df.itertuples(index=False)
+    )
+    print("Extraction terminée.")
+
+    features_df = pd.DataFrame(results, index=df.index)
+
+    features_df.info()
+
+    print("Envisager `df = df.join(features_df)`.")
+
+    return features_df
