@@ -23,18 +23,33 @@
 
 Si on veut travailler à plusieurs sur la même tâche d'un notebook, il vaut mieux créer chacun un notebook avec un nom différent, puis envisager de les réunir après coup en un seul notebook.
 
-Chacun travaille dans sa branche. Faire un merge entre sa branche et main régulièrement (environ une fois par semaine) puis supprimer et recréer sa branche à partir de main. (Pour éviter d'avoir à faire un merge monstrueux si on a des branches trop différentes.)
+Chacun travaille plutôt dans sa branche que sur main.
 
-### Si difficulté à push main
+### Si tu veux travailler sur la branche main (par exemple pour merge ta branche personnelle) :
+- `pull main` juste avant
+- faire le commit rapidement
+- `push` main rapidement.
+(La rapidité permet d'éviter les conflits vu qu'on se partage la branche main.)
 
-Si quelqu'un a fait un ou des commits sur main sans avoir fetch la dernière version de main, ça peut poser problème.
-Alors la procédure suivante peut servir :
-- créer une branche qui a les commits que la personne veut push
-- faire des commits sur cette branche si il y a encore des changements importants non committed (pour bien les sauvegarder)
+### Merge
+
+Faire un merge entre sa branche et main régulièrement (environ une fois par semaine).
+Puis :
+- supprimer sa branche sur son PC et sur le remote origin (Github)
+- recréer sa branche à partir de main.
+
+(Pour éviter d'avoir à faire un merge monstrueux si on a des branches trop différentes.)
+
+### Si tu as déjà fait un commit sur main pas encore push, et que quelqu'un a push sur main depuis ton dernier pull main :
+
+- crée une branche qui a les commits que tu veux push
+- commit sur cette branche si tu as encore des changements non committed (pour bien les sauvegarder)
 - push cette branche
-- revenir sur main
+- reviens sur main
 - `git fetch origin`
-- `git reset --hard origin/main` (c'est une commande irréversible qui réinitialise la branche main du PC de la personne pour qu'elle soit pareil que la branche main de Github)
-- puis merge la branche personnelle vers main
+- `git reset --hard origin/main` (c'est une commande irréversible qui réinitialise ta branche main pour qu'elle soit pareille que celle de Github)
+- puis merge ta branche vers main
 - push main
-- supprimer la branche personnelle du PC de la personne et du remote origin (Github) (comme recommandé après chaque merge).
+- supprimer ta branche de ton PC et du remote origin (Github) (comme recommandé après chaque merge)
+
+C'est pour éviter d'avoir à faire cette manipulation qu'on préfère utiliser une branche par personne. Sinon il faut bien penser à pull main avant de commit sur main, puis à push rapidement.
