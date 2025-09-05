@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from joblib import Parallel, delayed
+from pathlib import Path
 
 
 def load_extended_df(path='../../Dataset2/df.parquet'):
@@ -98,22 +99,28 @@ def split_and_save_dataframe(df, test_size=0.2, output_dir = '../../Dataset2', t
     return train_df, test_df
 
 
-def load_reproducible_split(data_path = '../../Dataset2/df.parquet', train_idx_path = '../../Dataset2/train_indices.parquet', test_idx_path = '../../Dataset2/test_indices.parquet', target_column = 'prdtypecode'):
+def load_reproducible_split(folder = '../../Dataset2', data_filename = 'df.parquet', train_idx_filename = 'train_indices.parquet', test_idx_filename = 'test_indices.parquet', target_column = 'prdtypecode'):
     """
     Charge le dataset complet et le divise en ensembles d'entraînement et de test
     en utilisant des fichiers d'index pré-sauvegardés.
 
     Args:
-        data_path (str): Chemin vers le fichier de données.
-        train_idx_path (str): Chemin vers le fichier contenant les index de train.
-        test_idx_path (str): Chemin vers le fichier contenant les index de test.
+        folder (str)
+        data_filename (str): fichier de données.
+        train_idx_filename (str): fichier contenant les index de train.
+        test_idx_filename (str): fichier contenant les index de test.
         target_column (str): Nom de la colonne cible.
 
     Returns:
         tuple: Un tuple contenant (X_train, X_test, y_train, y_test).
     """
+    # Préparer chemins
+    data_path = Path(folder) / data_filename
+    train_idx_path = Path(folder) / train_idx_filename
+    test_idx_path = Path(folder) / test_idx_filename
+
     # Charger les données et les index
-    full_df = pd.read_parquet(data_path)
+    full_df=load_extended_df(path=str(data_path))
     train_indices = pd.read_parquet(train_idx_path)['index']
     test_indices = pd.read_parquet(test_idx_path)['index']
 
