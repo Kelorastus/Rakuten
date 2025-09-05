@@ -5,12 +5,12 @@ from joblib import Parallel, delayed
 from pathlib import Path
 
 
-def load_extended_df(path='../../Dataset2/df.parquet'):
+def load_extended_df(path='Dataset2/df.parquet'):
     '''
     Charge le dataframe étendu.
 
     Exemple d'utilisation :
-    df=load_extended_df(path='../../Dataset2/df.parquet')
+    df=load_extended_df(path='Dataset2/df.parquet')
 
     (Le fichier parquet a été créé à la place des CSV originaux car le calculer à partir des CSV prend longtemps.)
 
@@ -75,7 +75,7 @@ def parallel_feature_creation(df, f, verbose=1):
     return features_df
 
 
-def split_and_save_dataframe(df, test_size=0.2, output_dir = '../../Dataset2', target_column = 'prdtypecode', SPLIT_SEED = 42):
+def split_and_save_dataframe(df, test_size=0.2, output_dir = 'Dataset2', target_column = 'prdtypecode', SPLIT_SEED = 42):
     # --- Création du split ---
     print("Création du split train/test...")
     train_df, test_df = train_test_split(
@@ -99,7 +99,7 @@ def split_and_save_dataframe(df, test_size=0.2, output_dir = '../../Dataset2', t
     return train_df, test_df
 
 
-def load_reproducible_split(folder = '../../Dataset2', data_filename = 'df.parquet', train_idx_filename = 'train_indices.parquet', test_idx_filename = 'test_indices.parquet', target_column = 'prdtypecode'):
+def load_reproducible_split(folder = 'Dataset2', data_filename = 'df.parquet', train_idx_filename = 'train_indices.parquet', test_idx_filename = 'test_indices.parquet', target_column = 'prdtypecode'):
     """
     Charge le dataset complet et le divise en ensembles d'entraînement et de test
     en utilisant des fichiers d'index pré-sauvegardés.

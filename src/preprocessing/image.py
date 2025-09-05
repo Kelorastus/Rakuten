@@ -6,13 +6,13 @@ from PIL import Image
 from pathlib import Path
 
 
-def get_image_path(row, folder = '../../Dataset/images/image_train'):
+def get_image_path(row, folder = 'Dataset/images/image_train'):
     filename = f"image_{row.imageid}_product_{row.productid}.jpg"
     path = Path(folder) / filename
     return path
 
 
-def load_image(row, color=True, folder = '../../Dataset/images/image_train'):
+def load_image(row, color=True, folder = 'Dataset/images/image_train'):
     '''OpenCV charge en BGR, donc l'ordre retourné est Bleu, Vert, Rouge.'''
     path = get_image_path(row, folder)
     if color:
@@ -25,7 +25,7 @@ def load_image(row, color=True, folder = '../../Dataset/images/image_train'):
     return img_color
 
 
-def get_image_features_with_hash(row, folder='../../Dataset/images/image_train', threshold=250) -> dict:
+def get_image_features_with_hash(row, folder='Dataset/images/image_train', threshold=250) -> dict:
     """
     Calcule un ensemble complet de features (géométrie, couleur, hash)
     à partir d'une image, en se basant sur un masque de contenu unique.
@@ -94,7 +94,7 @@ def get_image_features_with_hash(row, folder='../../Dataset/images/image_train',
     }
 
 
-def get_image_md5_hash(row, folder='../../Dataset/images/image_train') -> str:
+def get_image_md5_hash(row, folder='Dataset/images/image_train') -> str:
     # Calculer le hash MD5 de l'image.
     image_path = get_image_path(row, folder)
     with open(image_path, "rb") as f:
