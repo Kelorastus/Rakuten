@@ -29,7 +29,7 @@ Useful:
 ## To add new dependencies
 
 1. Activate the virtual environment (if not yet done in the current terminal): from the folder of this repository, run `source venv/bin/activate`.
-2. For example, to add the dependency `wordcloud`: `pip install wordcloud`. Copy its version number.
+2. For example, to add the dependency `wordcloud`: `pip install wordcloud` or `pip install wordcloud==1.9.4`. Copy its version number.
 3. To add the dependency `wordcloud` version 1.9.4: add the line `wordcloud==1.9.4` to the requirements file `requirements.txt`. Do this only for your chosen dependencies, NOT for the dependencies of your chosen dependencies. (If your chosen dependency depends on having / lacking an NVIDIA GPU, the line should instead be added to `requirements-gpu.txt` or `requirements-cpu.txt`, respectively.)
 4. Install: do step 5, 6, or 7 above in the section "Initialization on your machine".
 5. If you don't have `tensorflow`: `pip freeze > requirements.lock`.
