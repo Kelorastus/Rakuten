@@ -19,7 +19,8 @@ If you need `tensorflow`:
 
 Useful:
 - if anything went wrong
-- if you added a dependency but don't need it.
+- if you added a dependency but don't need it
+- if someone changed the requirement files and they conflict with your local venv.
 
 Delete the `venv` folder of your local repository.
 Then repeat the above from step 3 "Create a virtual environment".
