@@ -26,6 +26,7 @@ Si on veut travailler à plusieurs sur la même tâche d'un notebook, il vaut mi
 Chacun travaille plutôt dans sa branche que sur main.
 
 ### Si tu veux travailler sur la branche main (par exemple pour merge ta branche personnelle) :
+
 - `pull main` juste avant
 - faire le commit rapidement
 - `push` main rapidement.
@@ -42,13 +43,13 @@ Puis :
 
 ### Si tu as déjà fait un commit sur main pas encore push, et que quelqu'un a push sur main depuis ton dernier pull main :
 
-- crée une branche qui a les commits que tu veux push
+- créer une branche qui a les commits que tu veux push
 - commit sur cette branche si tu as encore des changements non committed (pour bien les sauvegarder)
 - push cette branche
-- reviens sur main
+- revenir sur main
 - `git fetch origin`
 - `git reset --hard origin/main` (c'est une commande irréversible qui réinitialise ta branche main pour qu'elle soit pareille que celle de Github)
-- puis merge ta branche vers main
+- merge ta branche vers main
 - push main
 - supprimer ta branche de ton PC et du remote origin (Github) (comme recommandé après chaque merge)
 
