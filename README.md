@@ -22,8 +22,9 @@ Useful:
 - if you did `pip install` but want to cancel
 - if someone changed the requirement files and they conflict with your local venv.
 
-Delete the `venv` folder of your local repository.
-Then repeat the above from step 3 "Create a virtual environment".
+1. If you want to preserve some of your added dependencies, follow step 3 below in section "To add new dependencies".
+2. Delete the `venv` folder of your local repository.
+3. Repeat from step 3 above "Create a virtual environment" in section "Initialization on your machine".
 
 ## To add new dependencies
 
