@@ -1,6 +1,7 @@
-# Le code suivant dans un notebook permet d'autoriser les imports de fichiers python de ce repo.
+# Le code suivant dans un notebook permet de :
+# - autoriser les imports de fichiers python de ce repo
+# - spécifier les chemins relativement à la racine du repo plutôt que relativement au notebook
 
-import sys
 import os
 
 # Ce code cherche le dossier racine en remontant dans l'arborescence
@@ -21,6 +22,4 @@ while not os.path.isdir(os.path.join(project_root, 'src')):
         raise FileNotFoundError("Impossible de trouver le dossier 'src'. Vérifiez la structure du projet.")
     project_root = parent_dir
 
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-    print(f"Ajout de '{project_root}' au sys.path .")
+os.chdir(project_root)
