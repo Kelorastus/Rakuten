@@ -19,7 +19,7 @@ If you need `tensorflow`:
 
 Useful:
 - if anything went wrong
-- if you added a dependency but don't need it
+- if you did `pip install` but want to cancel
 - if someone changed the requirement files and they conflict with your local venv.
 
 Delete the `venv` folder of your local repository.
@@ -29,7 +29,7 @@ Then repeat the above from step 3 "Create a virtual environment".
 
 1. Activate the virtual environment (if not yet done in the current terminal): from the folder of this repository, run `source venv/bin/activate`.
 2. For example, to add the dependency `wordcloud`: `pip install wordcloud`. Copy its version number.
-3. To add the dependency `wordcloud` version 1.9.4: add the line `wordcloud==1.9.4` to the requirements file `requirements.txt`. (If the dependency depends on having / lacking an NVIDIA GPU, the line should instead be added to `requirements-gpu.txt` or `requirements-cpu.txt`, respectively.)
+3. To add the dependency `wordcloud` version 1.9.4: add the line `wordcloud==1.9.4` to the requirements file `requirements.txt`. Do this only for your chosen dependencies, NOT for the dependencies of your chosen dependencies. (If your chosen dependency depends on having / lacking an NVIDIA GPU, the line should instead be added to `requirements-gpu.txt` or `requirements-cpu.txt`, respectively.)
 4. Install: do step 5, 6, or 7 above in the section "Initialization on your machine".
 5. If you don't have `tensorflow`: `pip freeze > requirements.lock`.
 6. If you have `tensorflow`:
