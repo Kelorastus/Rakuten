@@ -6,13 +6,20 @@
 2. Clone the repository.
 3. Create a virtual environment: in a terminal in the folder of this repository, run the command `python3 -m venv venv`.
 4. Activate it: `source venv/bin/activate`.
-5. If you don't have an NVIDIA GPU: `pip install -r requirements-cpu.lock`
-6. If you have an NVIDIA GPU:
+5. If you don't need `tensorflow`: `pip install -r requirements.lock`.
+
+If you need `tensorflow`:
+6. If you don't have an NVIDIA GPU: `pip install -r requirements-cpu.lock`
+7. If you have an NVIDIA GPU:
     - Make sure your NVIDIA drivers are installed.
     - If you are on Windows: install WSL2 and the NVIDIA CUDA Driver for WSL. Then, open your WSL terminal (e.g., Ubuntu) and proceed as if you are on Linux, activating the environment of the repository as in step 4.
     - `pip install -r requirements-gpu.lock`
 
-## To clean up your venv if anything went wrong
+## To clean up your venv
+
+Useful:
+- if anything went wrong
+- if you added a dependency but don't need it.
 
 Delete the `venv` folder of your local repository.
 Then repeat the above from step 3 "Create a virtual environment".
@@ -20,13 +27,15 @@ Then repeat the above from step 3 "Create a virtual environment".
 ## To add new dependencies
 
 1. Activate the virtual environment (if not yet done in the current terminal): from the folder of this repository, run `source venv/bin/activate`.
-2. For example, to add the dependency `wordcloud` version 1.9.4: add the line `wordcloud==1.9.4` to the requirements file `requirements.txt`. (If the dependency depends on having / lacking an NVIDIA GPU, the line should instead be added to `requirements-gpu.txt` or `requirements-cpu.txt`, respectively.)
-3. Install: do step 5 or 6 above in the section "Initialization on your machine".
-4. Update your lock file:
+2. For example, to add the dependency `wordcloud`: `pip install wordcloud`. Copy its version number.
+3. To add the dependency `wordcloud` version 1.9.4: add the line `wordcloud==1.9.4` to the requirements file `requirements.txt`. (If the dependency depends on having / lacking an NVIDIA GPU, the line should instead be added to `requirements-gpu.txt` or `requirements-cpu.txt`, respectively.)
+4. Install: do step 5, 6, or 7 above in the section "Initialization on your machine".
+5. If you don't have `tensorflow`: `pip freeze > requirements.lock`.
+6. If you have `tensorflow`:
     - if you have an NVIDIA GPU: `pip freeze > requirements-gpu.lock`.
     - if you don't have an NVIDIA GPU: `pip freeze > requirements-cpu.lock`.
-4. Commit the modified `requirements...` file(s) to main and push.
-5. Tell your collaborators: "Please pull main, then perform steps 4 to 6 of the file `README.md`, then restart VS Code or the Jupyter kernels of any open notebook."
+7. Commit any modified `requirements...` file to main and push.
+8. Tell your collaborators: "Please pull main, then perform steps 4 to 7 of the file `README.md`, then restart VS Code or the Jupyter kernels of any open notebook."
 
 ## Contributing guidelines
 
