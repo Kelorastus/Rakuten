@@ -119,7 +119,7 @@ def load_reproducible_split(folder = 'Dataset2', data_filename = 'df.parquet', t
     train_idx_path = Path(folder) / train_idx_filename
     test_idx_path = Path(folder) / test_idx_filename
 
-    # Charger les données et les index
+    # Charger les données étendues et les index
     full_df=load_extended_df(path=str(data_path))
     train_indices = pd.read_parquet(train_idx_path)['index']
     test_indices = pd.read_parquet(test_idx_path)['index']
