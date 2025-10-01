@@ -45,23 +45,24 @@ def save_preprocessors(preprocessors,artifacts_folder='artifacts/on_images/deep_
         print(path)
 
 
-def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32):
+def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32, rebalance_with_weights=False):
     """
     Preprocess a training or test dataset for deep learning.
 
     For a training dataset, preprocessors are optional, this function fits them if missing. For a test dataset, preprocessors must be given as arguments.
 
     Args:
-        X
-        y
-        preprocessors (dict[str])
+        X:
+        y:
+        preprocessors (dict[str]):
         shuffle: Must be True for training, False for validation.
-        BATCH_SIZE
+        BATCH_SIZE:
+        rebalance_with_weights: If True, the X and y arguments must be the full training dataset instead of a small sample. Useful if some classes are ignored by the model.
 
     Returns:
         ds: Tensorflow dataset
         dict[str]: Preprocessors that were fitted by this function, if any
-        dict[int]: Class weights to handle class imbalance. Useful if some classes are ignored by the model. For this dictionary to be relevant, arguments X and y should be the full training dataset instead of a small sample.
+        dict[int]: Class weights for class imbalance.
         dict[str]: Preprocessed data that was given to the tensorflow dataset
         y: Preprocessed target.
     """
@@ -128,9 +129,27 @@ def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32):
         ds = ds.shuffle(1000)
 
     AUTOTUNE = tf.data.AUTOTUNE
+    ds = ds.map(load_image_and_format, num_parallel_calls=AUTOTUNE)
+
+    if rebalance_with_weights:
+        # Créer une table de correspondance statique pour TensorFlow
+        keys = list(class_weight_dict.keys())
+        values = list(class_weight_dict.values())
+        class_weight_table = tf.lookup.StaticHashTable(
+            tf.lookup.KeyValueTensorInitializer(keys, values, key_dtype=tf.int64, value_dtype=tf.float32),
+            default_value=1.0 # Poids de 1 pour toute classe non trouvée
+        )
+        # Créer une fonction qui ajoute le poids au dataset
+        def add_sample_weights(inputs, label):
+            # 'label' est en one-hot, on doit retrouver l'index
+            label_index = tf.argmax(label, axis=-1)
+            # Chercher le poids correspondant à l'index de la classe
+            sample_weight = class_weight_table.lookup(label_index)
+            return (inputs, label, sample_weight)
+        ds = ds.map(add_sample_weights)
+
     ds = (
         ds
-        .map(load_image_and_format, num_parallel_calls=AUTOTUNE)
         .batch(BATCH_SIZE)
         .prefetch(buffer_size=AUTOTUNE)  # prépare le prochain lot pendant que le GPU travaille sur le lot actuel
     )
