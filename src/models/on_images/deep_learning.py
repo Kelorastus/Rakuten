@@ -38,15 +38,12 @@ def define_model(embedding_dim = 16, n_cols_tabular=24, num_classes = 27):
 
     # On ajoute nos propres couches par-dessus
     image_features = layers.GlobalAveragePooling2D(name='image_pooling')(base_model.output)
-    dense_layers_sizes=[128]
-    image_features = layers.Dense(dense_layers_sizes[-1], activation='relu', name='image_dense')(image_features)
+    image_features = layers.Dense(128, activation='relu', name='image_dense')(image_features)
 
     # Tabular branch
 
-    dense_layers_sizes.append(64)
-    tabular_features = layers.Dense(dense_layers_sizes[-1], activation='relu', name='tabular_dense_1')(tabular_input)
-    dense_layers_sizes.append(32)
-    tabular_features = layers.Dense(dense_layers_sizes[-1], activation='relu', name='tabular_dense_2')(tabular_features)
+    tabular_features = layers.Dense(64, activation='relu', name='tabular_dense_1')(tabular_input)
+    tabular_features = layers.Dense(32, activation='relu', name='tabular_dense_2')(tabular_features)
 
     # Hash branches
 
@@ -71,8 +68,7 @@ def define_model(embedding_dim = 16, n_cols_tabular=24, num_classes = 27):
     # Classification
 
     # Quelques couches denses pour apprendre les interactions entre les différentes modalités
-    dense_layers_sizes.append(256)
-    x = layers.Dense(dense_layers_sizes[-1], activation='relu', name='final_dense_1')(all_features)
+    x = layers.Dense(256, activation='relu', name='final_dense_1')(all_features)
     x = layers.Dropout(0.5)(x)  # pour éviter l'overfitting
     output = layers.Dense(num_classes, activation='softmax', name='output')(x)
 
