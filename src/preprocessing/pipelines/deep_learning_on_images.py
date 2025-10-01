@@ -59,13 +59,12 @@ def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32):
         BATCH_SIZE
 
     Returns:
-        tensorflow dataset
-        dict[str]: preprocessors that were fitted by this function, if any
-        dict[int]: class weights to handle class imbalance. Useful if some classes are ignored by the model. For this dictionary to be relevant, arguments X and y should be the full training dataset instead of a small sample.
-        dict[str]: preprocessed data that was given to the tensorflow dataset
+        ds: Tensorflow dataset
+        dict[str]: Preprocessors that were fitted by this function, if any
+        dict[int]: Class weights to handle class imbalance. Useful if some classes are ignored by the model. For this dictionary to be relevant, arguments X and y should be the full training dataset instead of a small sample.
+        dict[str]: Preprocessed data that was given to the tensorflow dataset
+        y: Preprocessed target.
     """
-
-    # TODO: Smote. See Jessy's notebook
 
     new_preprocessors = {}
 
@@ -135,4 +134,4 @@ def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32):
         .batch(BATCH_SIZE)
         .prefetch(buffer_size=AUTOTUNE)  # prépare le prochain lot pendant que le GPU travaille sur le lot actuel
     )
-    return ds, new_preprocessors, class_weight_dict, inputs_dict
+    return ds, new_preprocessors, class_weight_dict, inputs_dict, y
