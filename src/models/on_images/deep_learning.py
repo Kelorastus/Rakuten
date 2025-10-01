@@ -133,7 +133,7 @@ def flatten_params_for_logging(params_dict):
     return flat_params
 
 
-def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learning/v1/experiments.parquet', columns=['version', 'rebalance_with_weights', 'X_train.shape[0]', 'BATCH_SIZE', 'minutes_per_epoch', 'max_epochs', 'actual_epochs', 'learning_rate', 'val_accuracy', 'dense_layers_sizes', 'embedding_dims', 'comment']):
+def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learning/v1/experiments.parquet', columns=['subversion', 'rebalance_with_weights', 'X_train.shape[0]', 'BATCH_SIZE', 'minutes_per_epoch', 'max_epochs', 'actual_epochs', 'learning_rate', 'val_accuracy', 'weighted_avg_f1_score', 'min_f1_score', 'std_f1_score', 'dense_layers_sizes', 'embedding_dims', 'comment']):
     """
     Ajoute les résultats d'une expérience à un fichier de log Parquet.
     """
@@ -153,7 +153,6 @@ def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learnin
     else:
         # Sinon, c'est notre première expérience
         logs_df = new_log_df
-        print(f"Creating parquet log.")
 
     logs_df = logs_df[columns]
 
