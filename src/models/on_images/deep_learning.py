@@ -70,8 +70,6 @@ def define_model(embedding_dim = 16, n_cols_tabular=24, num_classes = 27):
     # Quelques couches denses pour apprendre les interactions entre les différentes modalités
     dense_layers_sizes.append(256)
     x = layers.Dense(dense_layers_sizes[-1], activation='relu', name='final_dense_1')(all_features)
-    #TODO: ajouter une couche dense ?
-
     x = layers.Dropout(0.5)(x)  # pour éviter l'overfitting
     output = layers.Dense(num_classes, activation='softmax', name='output')(x)
 

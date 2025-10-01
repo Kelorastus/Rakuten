@@ -1,9 +1,11 @@
 from pathlib import Path
 import joblib
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
+from sklearn.utils.class_weight import compute_class_weight
 
 from src.preprocessing.image import get_image_path
 
@@ -43,7 +45,7 @@ def save_preprocessors(preprocessors,artifacts_folder='artifacts/on_images/deep_
         print(path)
 
 
-def preprocess_features(X, y, preprocessors, BATCH_SIZE = 32):
+def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32):
     """
     Preprocess a training or test dataset for deep learning.
 
@@ -53,11 +55,13 @@ def preprocess_features(X, y, preprocessors, BATCH_SIZE = 32):
         X
         y
         preprocessors (dict[str])
+        shuffle: Must be True for training, False for validation.
         BATCH_SIZE
 
     Returns:
         tensorflow dataset
         dict[str]: preprocessors that were fitted by this function, if any
+        dict[int]: class weights to handle class imbalance. Useful if some classes are ignored by the model. For this dictionary to be relevant, arguments X and y should be the full training dataset instead of a small sample.
         dict[str]: preprocessed data that was given to the tensorflow dataset
     """
 
@@ -77,6 +81,14 @@ def preprocess_features(X, y, preprocessors, BATCH_SIZE = 32):
     NUM_CLASSES=len(preprocessors["target"].classes_)
 
     y = preprocessors["target"].transform(y)
+
+    # Utile sur l'ensemble du y_train (PAS sur l'échantillon)
+    # On a besoin des vraies proportions.
+    classes = np.unique(y)
+    class_weights = compute_class_weight(class_weight='balanced', classes=classes, y=y)
+    # On transforme ça en un dictionnaire que Keras comprend
+    class_weight_dict = dict(zip(classes, class_weights))
+
     y = to_categorical(y, num_classes=NUM_CLASSES)  # one-hot encoding
 
     numeric_features=['mean_r', 'mean_g', 'mean_b', 'std_r', 'std_g', 'std_b', 'median_r', 'median_g', 'median_b', 'mean_gray', 'std_gray', 'median_gray', 'essential_pixel_count', 'x_min', 'y_min', 'x_max', 'y_max', 'len_designation', 'len_description', 'essential_width', 'essential_height', 'essential_aspect_ratio', 'essential_area', 'rectangleness']
@@ -113,12 +125,14 @@ def preprocess_features(X, y, preprocessors, BATCH_SIZE = 32):
 
     ds = tf.data.Dataset.from_tensor_slices((inputs_dict, y))
 
+    if shuffle:
+        ds = ds.shuffle(1000)
+
     AUTOTUNE = tf.data.AUTOTUNE
     ds = (
         ds
-        .shuffle(1000)
         .map(load_image_and_format, num_parallel_calls=AUTOTUNE)
         .batch(BATCH_SIZE)
         .prefetch(buffer_size=AUTOTUNE)  # prépare le prochain lot pendant que le GPU travaille sur le lot actuel
     )
-    return ds, new_preprocessors, inputs_dict
+    return ds, new_preprocessors, class_weight_dict, inputs_dict
