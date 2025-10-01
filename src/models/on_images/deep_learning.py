@@ -1,5 +1,8 @@
+import pandas as pd
+from pathlib import Path
 from tensorflow import keras
 from tensorflow.keras import layers
+from tensorflow.keras.layers import Dense, Embedding
 
 
 def define_model(embedding_dim = 16, n_cols_tabular=24, num_classes = 27):
@@ -81,3 +84,79 @@ def define_model(embedding_dim = 16, n_cols_tabular=24, num_classes = 27):
     )
 
     return model
+
+
+def get_custom_hyperparams(model):
+    """
+    Inspecte un modèle Keras et extrait les hyperparamètres
+    des couches Dense et Embedding personnalisées (entraînables).
+    """
+    hyperparams = {
+        'dense_layers_sizes': {},
+        'embedding_dims': {}
+    }
+
+    for layer in model.layers:
+        # On ne s'intéresse qu'aux couches que nous entraînons
+        if layer.trainable:
+            # Si c'est une couche Dense
+            if isinstance(layer, Dense):
+                # On ignore la couche de sortie finale (softmax)
+                if layer.activation.__name__ != 'softmax':
+                    hyperparams['dense_layers_sizes'][layer.name] = layer.units
+
+            # Si c'est une couche Embedding
+            elif isinstance(layer, Embedding):
+                hyperparams['embedding_dims'][layer.name] = layer.output_dim
+
+    return hyperparams
+
+
+def flatten_params_for_logging(params_dict):
+    """
+    Transforme les dictionnaires et listes en chaînes de caractères
+    pour un stockage facile dans un DataFrame/Parquet.
+    """
+    flat_params = params_dict.copy()
+
+    # Aplatir les tailles des couches denses
+    if 'dense_layers_sizes' in flat_params:
+        # Trie par nom de couche pour la cohérence
+        sizes = dict(sorted(flat_params['dense_layers_sizes'].items()))
+        flat_params['dense_layers_sizes'] = '_'.join(map(str, sizes.values())) # ex: '128_32_64_256'
+
+    # Aplatir les dimensions des embeddings
+    if 'embedding_dims' in flat_params:
+        dims = dict(sorted(flat_params['embedding_dims'].items()))
+        flat_params['embedding_dims'] = '_'.join(map(str, dims.values())) # ex: '16_16'
+
+    return flat_params
+
+
+def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learning/v1/experiments.parquet', columns=['version', 'rebalance_with_weights', 'X_train.shape[0]', 'BATCH_SIZE', 'minutes_per_epoch', 'max_epochs', 'actual_epochs', 'learning_rate', 'val_accuracy', 'dense_layers_sizes', 'embedding_dims', 'comment']):
+    """
+    Ajoute les résultats d'une expérience à un fichier de log Parquet.
+    """
+    log_file = Path(log_file_path)
+
+    # Aplatir les hyperparamètres complexes
+    flat_tracker = flatten_params_for_logging(tracker_dict)
+
+    # Créer un DataFrame pour cette nouvelle expérience
+    new_log_df = pd.DataFrame([flat_tracker])
+
+    if log_file.exists():
+        # Si le fichier existe, charger les anciennes expériences
+        logs_df = pd.read_parquet(log_file)
+        # Concaténer les anciennes et la nouvelle
+        logs_df = pd.concat([logs_df, new_log_df], ignore_index=True)
+    else:
+        # Sinon, c'est notre première expérience
+        logs_df = new_log_df
+        print(f"Creating parquet log.")
+
+    logs_df = logs_df[columns]
+
+    # Sauvegarder le fichier mis à jour
+    logs_df.to_parquet(log_file)
+    print(f"Expérience sauvegardée dans {log_file_path}.")
