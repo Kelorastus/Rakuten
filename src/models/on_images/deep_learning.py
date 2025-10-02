@@ -5,9 +5,11 @@ from tensorflow.keras import layers, regularizers
 from tensorflow.keras.layers import Dense, Embedding
 
 
-def define_model(n_cols_tabular=24, num_classes = 27):
+def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classes = 27):
     '''
     Args:
+        pHash_vocab_size
+        md5_vocab_size
         n_cols_tabular: Nombre de features numériques.
         num_classes: Nombre de classes de la variable cible.
     '''
@@ -16,10 +18,6 @@ def define_model(n_cols_tabular=24, num_classes = 27):
 
     image_input = keras.Input(shape=(500, 500, 3), name="image_input")
     tabular_input = keras.Input(shape=(n_cols_tabular,), name='tabular_input')
-
-    pHash_vocab_size = len(preprocessors['hash'].categories_[0])
-    md5_vocab_size = len(preprocessors['hash'].categories_[1])
-    print(f"{pHash_vocab_size=}, {md5_vocab_size=}")
 
     pHash_input = keras.Input(shape=(1,), name='pHash_input', dtype='int64')  # Embedding a besoin du type int
     md5_input = keras.Input(shape=(1,), name='md5_input', dtype='int64')
