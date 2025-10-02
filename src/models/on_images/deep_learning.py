@@ -147,30 +147,34 @@ def flatten_params_for_logging(params_dict):
     return flat_params
 
 
-def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learning/v1/experiments.parquet', columns=['subversion', 'started_from_subversion', 'rebalance_with_weights', 'X_train.shape[0]', 'BATCH_SIZE', 'minutes_per_epoch', 'max_epochs', 'actual_epochs', 'learning_rate', 'val_accuracy', 'weighted_avg_f1_score', 'min_f1_score', 'std_f1_score', 'dense_layers_sizes', 'embedding_dims', 'comment']):
+def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learning/v1/experiments.parquet', columns=['subversion', 'rebalance_with_weights', 'X_train.shape[0]', 'BATCH_SIZE', 'minutes_per_epoch', 'max_epochs', 'total_epochs', 'actual_epochs', 'learning_rate', 'val_accuracy', 'weighted_avg_f1_score', 'min_f1_score', 'std_f1_score', 'dense_layers_sizes', 'embedding_dims', 'comment', 'best_model_path']):
     """
-    Ajoute les résultats d'une expérience à un fichier de log Parquet.
+    Met à jour la ligne correspondant à la version de l'expérience
+    dans le fichier de log Parquet.
     """
     log_file = Path(log_file_path)
 
-    # Aplatir les hyperparamètres complexes
+    # Aplatir les hyperparamètres
     flat_tracker = flatten_params_for_logging(tracker_dict)
 
-    # Créer un DataFrame pour cette nouvelle expérience
-    new_log_df = pd.DataFrame([flat_tracker])
+    current_version = flat_tracker['version']
 
     if log_file.exists():
-        # Si le fichier existe, charger les anciennes expériences
         logs_df = pd.read_parquet(log_file)
-        # Concaténer les anciennes et la nouvelle
-        logs_df = pd.concat([logs_df, new_log_df], ignore_index=True)
+        # Vérifier si notre version existe déjà
+        if current_version in logs_df['version'].values:
+            # Mettre à jour la ligne existante
+            logs_df.loc[logs_df['subversion'] == current_version, flat_tracker.keys()] = flat_tracker.values()
+        else:
+            # Sinon, ajouter la nouvelle ligne (cas d'une nouvelle expérience)
+            new_log_df = pd.DataFrame([flat_tracker])
+            logs_df = pd.concat([logs_df, new_log_df], ignore_index=True)
     else:
-        # Sinon, c'est notre première expérience
-        logs_df = new_log_df
-        logs_df['started_from_subversion']=logs_df['started_from_subversion'].astype('Int64')  # allow missing values
+        # Créer le DataFrame si le fichier n'existe pas
+        logs_df = pd.DataFrame([flat_tracker])
 
     logs_df = logs_df[columns]
 
     # Sauvegarder le fichier mis à jour
     logs_df.to_parquet(log_file)
-    print(f"Expérience sauvegardée dans {log_file_path}.")
+    print(f"Log pour l'expérience version {current_version} mis à jour dans {log_file_path}.")
