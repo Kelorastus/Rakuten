@@ -145,7 +145,7 @@ def flatten_params_for_logging(params_dict):
     return flat_params
 
 
-def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learning/v1/experiments.parquet', columns=['subversion', 'rebalance_with_weights', 'X_train.shape[0]', 'BATCH_SIZE', 'minutes_per_epoch', 'max_epochs', 'total_epochs', 'actual_epochs', 'learning_rate', 'val_accuracy', 'weighted_avg_f1_score', 'min_f1_score', 'std_f1_score', 'dense_layers_sizes', 'embedding_dims', 'comment', 'best_model_path']):
+def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learning/v1/experiments.parquet', columns=['subversion', 'rebalance_with_weights', 'X_train.shape[0]', 'BATCH_SIZE', 'minutes_per_epoch', 'max_epochs', 'total_epochs', 'learning_rate', 'val_accuracy', 'weighted_avg_f1_score', 'min_f1_score', 'std_f1_score', 'dense_layers_sizes', 'embedding_dims', 'comment', 'best_model_path']):
     """
     Met à jour la ligne correspondant à la version de l'expérience
     dans le fichier de log Parquet.
@@ -155,14 +155,14 @@ def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learnin
     # Aplatir les hyperparamètres
     flat_tracker = flatten_params_for_logging(tracker_dict)
 
-    current_version = flat_tracker['version']
+    current_subversion = flat_tracker['subversion']
 
     if log_file.exists():
         logs_df = pd.read_parquet(log_file)
         # Vérifier si notre version existe déjà
-        if current_version in logs_df['version'].values:
+        if current_subversion in logs_df['subversion'].values:
             # Mettre à jour la ligne existante
-            logs_df.loc[logs_df['subversion'] == current_version, flat_tracker.keys()] = flat_tracker.values()
+            logs_df.loc[logs_df['subversion'] == current_subversion, flat_tracker.keys()] = flat_tracker.values()
         else:
             # Sinon, ajouter la nouvelle ligne (cas d'une nouvelle expérience)
             new_log_df = pd.DataFrame([flat_tracker])
@@ -175,4 +175,4 @@ def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learnin
 
     # Sauvegarder le fichier mis à jour
     logs_df.to_parquet(log_file)
-    print(f"Log pour l'expérience version {current_version} mis à jour dans {log_file_path}.")
+    print(f"Log pour l'expérience version {current_subversion} mis à jour dans {log_file_path}.")
