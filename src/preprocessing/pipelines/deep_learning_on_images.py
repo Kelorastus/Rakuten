@@ -1,8 +1,11 @@
 from pathlib import Path
 import joblib
 import numpy as np
+
 import tensorflow as tf
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras import layers
+
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.utils.class_weight import compute_class_weight
@@ -10,7 +13,15 @@ from sklearn.utils.class_weight import compute_class_weight
 from src.preprocessing.image import get_image_path
 
 
-def load_image_and_format(inputs, label):
+# Créer un petit modèle séquentiel pour l'augmentation
+data_augmentation = tf.keras.Sequential([
+  layers.RandomFlip("horizontal"),
+  layers.RandomRotation(0.1),
+  layers.RandomZoom(0.1),
+])
+
+
+def load_image(inputs, label, augment=False):
     # 'inputs' est le dictionnaire produit par preprocess_features
     filepath = inputs['image_input']  # On récupère le chemin de l'image
 
@@ -18,6 +29,9 @@ def load_image_and_format(inputs, label):
     image_raw = tf.io.read_file(filepath)
     image = tf.io.decode_jpeg(image_raw, channels=3)
     image = tf.image.resize(image, (500, 500))
+
+    if augment:
+        image = data_augmentation(image)
 
     # On met à jour le dictionnaire : on remplace le chemin par le tenseur de l'image
     inputs['image_input'] = image
@@ -45,7 +59,7 @@ def save_preprocessors(preprocessors,artifacts_folder='artifacts/on_images/deep_
         print(path)
 
 
-def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32, rebalance_with_weights=False):
+def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32, rebalance_with_weights=False, augment=False):
     """
     Preprocess a training or test dataset for deep learning.
 
@@ -58,6 +72,7 @@ def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32, reba
         shuffle: Must be True for training, False for validation.
         BATCH_SIZE:
         rebalance_with_weights: If True, the X and y arguments must be the full training dataset instead of a small sample. Useful if some classes are ignored by the model.
+        augment: Should be True for training to reduce overfitting. Should be False for validation.
 
     Returns:
         ds: Tensorflow dataset
@@ -129,7 +144,7 @@ def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32, reba
         ds = ds.shuffle(1000)
 
     AUTOTUNE = tf.data.AUTOTUNE
-    ds = ds.map(load_image_and_format, num_parallel_calls=AUTOTUNE)
+    ds = ds.map(lambda inputs, label: load_image(inputs, label, augment=augment), num_parallel_calls=AUTOTUNE)
 
     if rebalance_with_weights:
         # Créer une table de correspondance statique pour TensorFlow
