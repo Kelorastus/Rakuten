@@ -5,10 +5,9 @@ from tensorflow.keras import layers, regularizers
 from tensorflow.keras.layers import Dense, Embedding
 
 
-def define_model(embedding_dim = 16, n_cols_tabular=24, num_classes = 27):
+def define_model(n_cols_tabular=24, num_classes = 27):
     '''
     Args:
-        embedding_dim: La taille souhaitée du vecteur pour chaque hash. C'est un hyperparamètre.
         n_cols_tabular: Nombre de features numériques.
         num_classes: Nombre de classes de la variable cible.
     '''
@@ -60,10 +59,10 @@ def define_model(embedding_dim = 16, n_cols_tabular=24, num_classes = 27):
 
     # Chaque hash passe par sa propre couche d'Embedding.
 
-    pHash_features = layers.Embedding(input_dim=pHash_vocab_size, output_dim=embedding_dim, name='pHash_embedding')(pHash_input)
+    pHash_features = layers.Embedding(input_dim=pHash_vocab_size, output_dim=16, name='pHash_embedding')(pHash_input)
     pHash_features = layers.Flatten(name='pHash_flatten')(pHash_features)  # retire une dimension superflue de taille 1
 
-    md5_features = layers.Embedding(input_dim=md5_vocab_size, output_dim=embedding_dim, name='md5_embedding')(md5_input)
+    md5_features = layers.Embedding(input_dim=md5_vocab_size, output_dim=16, name='md5_embedding')(md5_input)
     md5_features = layers.Flatten(name='md5_flatten')(md5_features)
 
     # Fusing branches
