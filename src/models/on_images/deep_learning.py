@@ -37,19 +37,19 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
     image_features = layers.GlobalAveragePooling2D(name='image_pooling')(base_model.output)
 
     image_features = layers.Dense(
-        128, activation='relu', name='image_dense',
+        64, activation='relu', name='image_dense',
         kernel_regularizer=regularizers.l2(0.001), # Ajoute une pénalité L2
     )(image_features)
 
     # Tabular branch
 
     tabular_features = layers.Dense(
-        64, activation='relu', name='tabular_dense_1',
+        32, activation='relu', name='tabular_dense_1',
         kernel_regularizer=regularizers.l2(0.001), # Ajoute une pénalité L2
     )(tabular_input)
 
     tabular_features = layers.Dense(
-        32, activation='relu', name='tabular_dense_2',
+        16, activation='relu', name='tabular_dense_2',
         kernel_regularizer=regularizers.l2(0.001), # Ajoute une pénalité L2
     )(tabular_features)
 
@@ -57,10 +57,10 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
 
     # Chaque hash passe par sa propre couche d'Embedding.
 
-    pHash_features = layers.Embedding(input_dim=pHash_vocab_size, output_dim=16, name='pHash_embedding')(pHash_input)
+    pHash_features = layers.Embedding(input_dim=pHash_vocab_size, output_dim=8, name='pHash_embedding')(pHash_input)
     pHash_features = layers.Flatten(name='pHash_flatten')(pHash_features)  # retire une dimension superflue de taille 1
 
-    md5_features = layers.Embedding(input_dim=md5_vocab_size, output_dim=16, name='md5_embedding')(md5_input)
+    md5_features = layers.Embedding(input_dim=md5_vocab_size, output_dim=8, name='md5_embedding')(md5_input)
     md5_features = layers.Flatten(name='md5_flatten')(md5_features)
 
     # Fusing branches
@@ -77,11 +77,11 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
 
     # Quelques couches denses pour apprendre les interactions entre les différentes modalités
     x = layers.Dense(
-        256, activation='relu', name='final_dense_1',
+        128, activation='relu', name='final_dense_1',
         kernel_regularizer=regularizers.l2(0.001), # Ajoute une pénalité L2
     )(all_features)
 
-    x = layers.Dropout(0.7)(x)  # pour éviter l'overfitting
+    x = layers.Dropout(0.5)(x)
 
     output = layers.Dense(
         num_classes, activation='softmax', name='output',
