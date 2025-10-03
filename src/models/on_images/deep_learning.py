@@ -175,4 +175,4 @@ def log_experiment(tracker_dict, log_file_path='artifacts/on_images/deep_learnin
 
     # Sauvegarder le fichier mis à jour
     logs_df.to_parquet(log_file)
-    print(f"Log pour l'expérience version {current_subversion} mis à jour dans {log_file_path}.")
+    print(f"Log pour l'expérience subversion {current_subversion} mis à jour dans {log_file_path} .")
