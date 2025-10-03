@@ -59,7 +59,7 @@ def save_preprocessors(preprocessors,artifacts_folder='artifacts/on_images/deep_
         print(path)
 
 
-def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32, rebalance_with_weights=False, augment=False):
+def preprocess_features(X, y, preprocessors, full_y_train=None, shuffle=True, BATCH_SIZE = 32, rebalance_with_weights=False, augment=False):
     """
     Preprocess a training or test dataset for deep learning.
 
@@ -99,8 +99,12 @@ def preprocess_features(X, y, preprocessors, shuffle=True, BATCH_SIZE = 32, reba
 
     # Utile sur l'ensemble du y_train (PAS sur l'échantillon)
     # On a besoin des vraies proportions.
-    classes = np.unique(y)
-    class_weights = compute_class_weight(class_weight='balanced', classes=classes, y=y)
+    if not full_y_train:
+        if rebalance_with_weights:
+            raise ValueError("rebalance_with_weights is True so full_y_train should be given.")
+        full_y_train = y
+    classes = np.unique(full_y_train)
+    class_weights = compute_class_weight(class_weight='balanced', classes=classes, y=full_y_train)
     # On transforme ça en un dictionnaire que Keras comprend
     class_weight_dict = dict(zip(classes, class_weights))
 
