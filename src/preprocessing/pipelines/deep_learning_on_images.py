@@ -99,7 +99,7 @@ def preprocess_features(X, y, preprocessors, full_y_train=None, shuffle=True, BA
 
     # Utile sur l'ensemble du y_train (PAS sur l'échantillon)
     # On a besoin des vraies proportions.
-    if not full_y_train:
+    if full_y_train is None:
         if rebalance_with_weights:
             raise ValueError("rebalance_with_weights is True so full_y_train should be given.")
         full_y_train = y
