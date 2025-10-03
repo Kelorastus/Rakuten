@@ -1,5 +1,5 @@
 Dataset/images*
-artifacts/on_images/deep_learning/v1/tensorboard_logs_v1
+artifacts/on_images/deep_learning/v1/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
