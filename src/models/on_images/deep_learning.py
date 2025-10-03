@@ -72,6 +72,7 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
         pHash_features,
         md5_features
     ])
+    x = layers.Dropout(0.5)(all_features)  # ajout sv 4 pour réduire overfitting
 
     # Classification
 
@@ -79,7 +80,7 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
     x = layers.Dense(
         128, activation='relu', name='final_dense_1',
         kernel_regularizer=regularizers.l2(0.001), # Ajoute une pénalité L2
-    )(all_features)
+    )(x)
 
     x = layers.Dropout(0.5)(x)
 
