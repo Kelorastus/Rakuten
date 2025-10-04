@@ -96,4 +96,4 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
         outputs=output
     )
 
-    return model
+    return model, base_model

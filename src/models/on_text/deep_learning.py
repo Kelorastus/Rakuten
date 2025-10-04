@@ -92,4 +92,4 @@ def define_model(num_classes = 27):
         outputs=output
     )
 
-    return model
+    return model, base_model

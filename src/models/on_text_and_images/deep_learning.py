@@ -92,10 +92,10 @@ def define_model(num_classes = 27):  #TODO: was copied from DL_on_img
         outputs=output
     )
 
-    return model
+    return model, base_model
 
 
-def get_custom_hyperparams(model):
+def get_custom_hyperparams(model, base_model):
     """
     Inspecte un modèle Keras et extrait les hyperparamètres
     des couches Dense et Embedding personnalisées (entraînables).
@@ -107,7 +107,7 @@ def get_custom_hyperparams(model):
 
     for layer in model.layers:
         # On ne s'intéresse qu'aux couches que nous entraînons
-        if layer.trainable:
+        if layer not in base_model.layers:
             # Si c'est une couche Dense
             if isinstance(layer, Dense):
                 # On ignore la couche de sortie finale (softmax)
