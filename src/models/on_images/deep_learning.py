@@ -31,7 +31,7 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
         weights='imagenet', # Poids appris sur des millions d'images
         input_tensor=image_input
     )
-    base_model.trainable = False # On "gèle" le modèle de base pour le début de l'entraînement
+    # base_model.trainable = False # On "gèle" le modèle de base pour le début de l'entraînement
 
     # On ajoute nos propres couches par-dessus
     image_features = layers.GlobalAveragePooling2D(name='image_pooling')(base_model.output)
