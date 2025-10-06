@@ -1,5 +1,3 @@
-from pathlib import Path
-import joblib
 import numpy as np
 
 import tensorflow as tf
@@ -39,7 +37,7 @@ def load_image(inputs, label, augment=False):
     return inputs, label
 
 
-def preprocess_features(X, y, preprocessors, full_y_train=None, shuffle=True, BATCH_SIZE = 32, rebalance_with_weights=False, augment=False):
+def preprocess_features(X, y, preprocessors, full_X_train=None, full_y_train=None, shuffle=True, BATCH_SIZE = 32, rebalance_with_weights=False, augment=False):
     """
     Preprocess a training or test dataset for deep learning.
 
@@ -49,7 +47,8 @@ def preprocess_features(X, y, preprocessors, full_y_train=None, shuffle=True, BA
         X:
         y:
         preprocessors (dict[str]):
-        full_y_train:
+        full_X_train: Must be provided if and only if X is (a sample of or the full) training set.
+        full_y_train: Must be provided if and only if rebalance_with_weights is True and X is (a sample of or the full) training set.
         shuffle: Must be True for training, False for validation.
         BATCH_SIZE:
         rebalance_with_weights: If True, full_y_train must be provided and X must be (a sample of or the full) training set. Useful if some classes are ignored by the model.
@@ -90,6 +89,22 @@ def preprocess_features(X, y, preprocessors, full_y_train=None, shuffle=True, BA
 
     y = to_categorical(y, num_classes=NUM_CLASSES)  # one-hot encoding
 
+    if "text_vectorizer" not in preprocessors:
+        if full_X_train is None:
+            raise ValueError("text_vectorizer or full_X_train must be provided.")
+        concatenate_text_columns(full_X_train)
+
+        # --- Couche de preprocessing qui sera intégrée au modèle ---
+        # Elle gère la tokenisation (texte -> entiers), la mise en minuscules, etc.
+        new_preprocessors["text_vectorizer"] = layers.TextVectorization(
+            max_tokens=20000, # Taille du vocabulaire
+            output_sequence_length=310 # Longueur max des phrases (tronque/padde) (95ème percentile des nombres de mots)
+        )
+        # sur jeu entier de données texte
+        new_preprocessors["text_vectorizer"].adapt(full_X_train['full_text'].values)
+
+    concatenate_text_columns(X)
+
     numeric_features=['mean_r', 'mean_g', 'mean_b', 'std_r', 'std_g', 'std_b', 'median_r', 'median_g', 'median_b', 'mean_gray', 'std_gray', 'median_gray', 'essential_pixel_count', 'x_min', 'y_min', 'x_max', 'y_max', 'len_designation', 'len_description', 'essential_width', 'essential_height', 'essential_aspect_ratio', 'essential_area', 'rectangleness']
 
     if "tabular" not in preprocessors:
@@ -116,6 +131,7 @@ def preprocess_features(X, y, preprocessors, full_y_train=None, shuffle=True, BA
 
     # On prépare un dictionnaire de toutes nos entrées
     inputs_dict = {
+        'text_input': X['full_text'].values,
         'tabular_input': X_tabular_processed,
         'pHash_input': X_hashes_processed[:, 0],
         'md5_input': X_hashes_processed[:, 1],
