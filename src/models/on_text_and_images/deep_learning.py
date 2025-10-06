@@ -142,7 +142,7 @@ def flatten_params_for_logging(params_dict):
     return flat_params
 
 
-def log_experiment(tracker_dict, loaded_model=False, log_file_path='artifacts/on_images/deep_learning/v1/experiments.parquet', columns=['subversion', 'rebalance_with_weights', 'X_train.shape[0]', 'BATCH_SIZE', 'minutes_per_epoch', 'total_epochs', 'learning_rate', 'val_accuracy', 'weighted_avg_f1_score', 'min_f1_score', 'std_f1_score', 'dense_layers_sizes', 'embedding_dims', 'timestamp', 'comment', 'best_model_path']):
+def log_experiment(tracker_dict, loaded_model=False, log_file_path='artifacts/on_images/deep_learning/v1/experiments.parquet', columns=['modality','arch_version', 'rebalance_with_weights', 'X_train.shape[0]', 'BATCH_SIZE', 'minutes_per_epoch', 'total_epochs', 'learning_rate', 'val_accuracy', 'weighted_avg_f1_score', 'min_f1_score', 'std_f1_score', 'dense_layers_sizes', 'embedding_dims', 'timestamp', 'comment', 'best_model_path']):
     """
     Met à jour la ligne correspondant à la version de l'expérience
     dans le fichier de log Parquet.
@@ -152,7 +152,7 @@ def log_experiment(tracker_dict, loaded_model=False, log_file_path='artifacts/on
     # Aplatir les hyperparamètres
     flat_tracker = flatten_params_for_logging(tracker_dict)
 
-    current_subversion = flat_tracker['subversion']
+    current_arch_version = flat_tracker['arch_version']
 
     if log_file.exists():
         logs_df = pd.read_parquet(log_file)
@@ -166,4 +166,4 @@ def log_experiment(tracker_dict, loaded_model=False, log_file_path='artifacts/on
 
     # Sauvegarder le fichier mis à jour
     logs_df.to_parquet(log_file)
-    print(f"Log pour l'expérience subversion {current_subversion} mis à jour dans {log_file_path} .")
+    print(f"Log pour l'expérience arch_version {current_arch_version} mis à jour dans {log_file_path} .")
