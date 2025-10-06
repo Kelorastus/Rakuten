@@ -156,14 +156,8 @@ def log_experiment(tracker_dict, loaded_model=False, log_file_path='artifacts/on
 
     if log_file.exists():
         logs_df = pd.read_parquet(log_file)
-        # Vérifier si notre version existe déjà
-        if loaded_model and current_subversion in logs_df['subversion'].values:
-            # Mettre à jour la ligne existante
-            logs_df.loc[logs_df['subversion'] == current_subversion, flat_tracker.keys()] = flat_tracker.values()
-        else:
-            # Sinon, ajouter la nouvelle ligne (cas d'une nouvelle expérience)
-            new_log_df = pd.DataFrame([flat_tracker])
-            logs_df = pd.concat([logs_df, new_log_df], ignore_index=True)
+        new_log_df = pd.DataFrame([flat_tracker])
+        logs_df = pd.concat([logs_df, new_log_df], ignore_index=True)
     else:
         # Créer le DataFrame si le fichier n'existe pas
         logs_df = pd.DataFrame([flat_tracker])
