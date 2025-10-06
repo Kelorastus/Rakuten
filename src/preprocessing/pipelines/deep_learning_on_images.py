@@ -39,26 +39,6 @@ def load_image(inputs, label, augment=False):
     return inputs, label
 
 
-def load_preprocessors(names=['target','tabular','hash'],artifacts_folder='artifacts/on_images/deep_learning/v1'):
-    folder = Path(artifacts_folder) / "preprocessors"
-    preprocessors = {}
-    for name in names:
-        path = folder / f'{name}.joblib'
-        preprocessors[name]=joblib.load(path)
-        print(path)
-    return preprocessors
-
-
-def save_preprocessors(preprocessors,artifacts_folder='artifacts/on_images/deep_learning/v1'):
-    folder = Path(artifacts_folder) / "preprocessors"
-    folder.mkdir(parents=True, exist_ok=True)
-
-    for name, preprocessor in preprocessors.items():
-        path = folder / f'{name}.joblib'
-        joblib.dump(preprocessor, path)
-        print(path)
-
-
 def preprocess_features(X, y, preprocessors, full_y_train=None, shuffle=True, BATCH_SIZE = 32, rebalance_with_weights=False, augment=False):
     """
     Preprocess a training or test dataset for deep learning.
@@ -69,10 +49,10 @@ def preprocess_features(X, y, preprocessors, full_y_train=None, shuffle=True, BA
         X:
         y:
         preprocessors (dict[str]):
+        full_y_train:
         shuffle: Must be True for training, False for validation.
         BATCH_SIZE:
-        rebalance_with_weights: If True, the X and y arguments must be the full training dataset instead of a small sample. Useful if some classes are ignored by the model.
-        augment: Should be True for training to reduce overfitting. Should be False for validation.
+        rebalance_with_weights: If True, full_y_train must be provided and X must be (a sample of or the full) training set. Useful if some classes are ignored by the model.
 
     Returns:
         ds: Tensorflow dataset
