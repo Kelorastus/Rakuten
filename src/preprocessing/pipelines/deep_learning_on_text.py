@@ -35,7 +35,6 @@ def preprocess_features(X, y, preprocessors, full_X_train=None, full_y_train=Non
         dict[int]: Class weights for class imbalance.
         dict[str]: Preprocessed data that was given to the tensorflow dataset
         y: Preprocessed target.
-        text_vectorizer: fitted first layer of the model.
     """
 
     new_preprocessors = {}

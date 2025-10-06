@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+import  tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers, regularizers
 from tensorflow.keras.layers import Dense, Embedding
@@ -15,7 +16,7 @@ def define_model(text_vectorizer, num_classes=27):
     text_input = keras.Input(shape=(1,), dtype=tf.string, name='text_input')
     vectorized_text = text_vectorizer(text_input)
     text_embedding = layers.Embedding(
-        input_dim=text_vectorizer.get_vocabulary_size(),
+        input_dim=len(text_vectorizer.get_vocabulary()),
         output_dim=128,
         name='text_embedding'
     )(vectorized_text)
