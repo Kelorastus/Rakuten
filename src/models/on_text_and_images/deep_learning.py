@@ -5,9 +5,12 @@ from tensorflow.keras import layers, regularizers
 from tensorflow.keras.layers import Dense, Embedding
 
 
-def define_model(num_classes = 27):  #TODO: was copied from DL_on_img
+def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classes = 27):  #TODO: was copied from DL_on_img
     '''
     Args:
+        pHash_vocab_size
+        md5_vocab_size
+        n_cols_tabular: Nombre de features numériques.
         num_classes: Nombre de classes de la variable cible.
     '''
 
@@ -69,6 +72,7 @@ def define_model(num_classes = 27):  #TODO: was copied from DL_on_img
         pHash_features,
         md5_features
     ])
+    # x = layers.Dropout(0.2)(all_features)
 
     # Classification
 
@@ -78,7 +82,7 @@ def define_model(num_classes = 27):  #TODO: was copied from DL_on_img
         kernel_regularizer=regularizers.l2(0.001), # Ajoute une pénalité L2
     )(all_features)
 
-    x = layers.Dropout(0.7)(x)  # pour éviter l'overfitting
+    x = layers.Dropout(0.5)(x)
 
     output = layers.Dense(
         num_classes, activation='softmax', name='output',
@@ -169,4 +173,4 @@ def log_experiment(tracker_dict, loaded_model=False, log_file_path='artifacts/on
 
     # Sauvegarder le fichier mis à jour
     logs_df.to_parquet(log_file)
-    print(f"Log pour l'expérience arch_version {current_arch_version} mis à jour dans {log_file_path} .")
+    print(f"Log pour l'expérience arch_version {current_arch_version} ajouté dans {log_file_path} .")

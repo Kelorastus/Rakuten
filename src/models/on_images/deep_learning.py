@@ -82,7 +82,7 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
         kernel_regularizer=regularizers.l2(0.001), # Ajoute une pénalité L2
     )(all_features)
 
-    x = layers.Dropout(0.5)(x)  #TODO: remove? or set rate=.2 ?
+    x = layers.Dropout(0.5)(x)
 
     output = layers.Dense(
         num_classes, activation='softmax', name='output',
