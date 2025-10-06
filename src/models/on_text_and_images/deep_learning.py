@@ -95,10 +95,13 @@ def define_model(num_classes = 27):  #TODO: was copied from DL_on_img
     return model, base_model
 
 
-def get_custom_hyperparams(model, base_model):
+def get_custom_hyperparams(model, base_model=None):
     """
     Inspecte un modèle Keras et extrait les hyperparamètres
     des couches Dense et Embedding personnalisées (entraînables).
+
+    Args:
+        base_model: Useful for transfer learning if you want to omit the layers of the pretrained model.
     """
     hyperparams = {
         'dense_layers_sizes': {},
@@ -107,7 +110,7 @@ def get_custom_hyperparams(model, base_model):
 
     for layer in model.layers:
         # On ne s'intéresse qu'aux couches que nous entraînons
-        if layer not in base_model.layers:
+        if base_model is None or layer not in base_model.layers:
             # Si c'est une couche Dense
             if isinstance(layer, Dense):
                 # On ignore la couche de sortie finale (softmax)
