@@ -9,6 +9,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.utils.class_weight import compute_class_weight
 
 from src.preprocessing.image import get_image_path
+from src.preprocessing.pipelines.deep_learning_on_text import concatenate_text_columns
 
 
 # Créer un petit modèle séquentiel pour l'augmentation
