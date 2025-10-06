@@ -1,13 +1,15 @@
 import pandas as pd
 from pathlib import Path
+import  tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers, regularizers
 from tensorflow.keras.layers import Dense, Embedding
 
 
-def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classes = 27):  #TODO: was copied from DL_on_img
+def define_model(text_vectorizer, pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classes = 27):  #TODO: was copied from DL_on_img
     '''
     Args:
+        text_vectorizer: Une couche TextVectorization déjà adaptée.
         pHash_vocab_size
         md5_vocab_size
         n_cols_tabular: Nombre de features numériques.
@@ -16,11 +18,25 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
 
     # Inputs
 
+    text_input = keras.Input(shape=(1,), dtype=tf.string, name='text_input')
+
     image_input = keras.Input(shape=(500, 500, 3), name="image_input")
     tabular_input = keras.Input(shape=(n_cols_tabular,), name='tabular_input')
 
     pHash_input = keras.Input(shape=(1,), name='pHash_input', dtype='int64')  # Embedding a besoin du type int
     md5_input = keras.Input(shape=(1,), name='md5_input', dtype='int64')
+
+    # Text branch
+
+    vectorized_text = text_vectorizer(text_input)
+    text_embedding = layers.Embedding(
+        input_dim=len(text_vectorizer.get_vocabulary()),
+        output_dim=128,
+        name='text_embedding'
+    )(vectorized_text)
+    x = layers.Conv1D(128, 5, activation='relu')(text_embedding)
+    x = layers.GlobalMaxPooling1D()(x) # Prend l'information la plus importante de la séquence
+    text_features = layers.Dense(64, activation='relu')(x)
 
     # Image branch
 
@@ -70,7 +86,8 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
         image_features,
         tabular_features,
         pHash_features,
-        md5_features
+        md5_features,
+        text_features
     ])
     # x = layers.Dropout(0.2)(all_features)
 
@@ -92,7 +109,7 @@ def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classe
     # Model
 
     model = keras.Model(
-        inputs=[image_input, tabular_input, pHash_input, md5_input],
+        inputs=[image_input, tabular_input, pHash_input, md5_input, text_input],
         outputs=output
     )
 
