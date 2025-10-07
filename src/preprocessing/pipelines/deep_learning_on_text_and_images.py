@@ -66,8 +66,6 @@ def preprocess_features(X, y, preprocessors, full_X_train=None, full_y_train=Non
 
     X['image_path']=X.apply(get_image_path,axis=1,as_string=True)
 
-    X = X.drop(columns=['designation', 'description', 'gray_image_pHash', 'productid', 'imageid'])
-
     if "target" not in preprocessors:
         new_preprocessors["target"] = LabelEncoder()
         new_preprocessors["target"].fit(y)
