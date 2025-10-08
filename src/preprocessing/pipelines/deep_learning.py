@@ -2,7 +2,7 @@ from pathlib import Path
 import joblib
 
 
-def load_preprocessors(names=['target','tabular','hash'],artifacts_folder='artifacts/on_images/deep_learning/v1'):
+def load_preprocessors(names=['target','tabular','hash','text_vectorizer'],artifacts_folder='artifacts/on_images/deep_learning/v1'):
     folder = Path(artifacts_folder) / "preprocessors"
     preprocessors = {}
     for name in names:
