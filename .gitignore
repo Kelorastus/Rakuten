@@ -3,6 +3,8 @@ artifacts/on_images/deep_learning/v1/
 artifacts/on_text/deep_learning/v1/
 artifacts/on_text_and_images/deep_learning/v1/
 
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
