@@ -6,9 +6,11 @@ from PIL import Image
 from pathlib import Path
 
 
-def get_image_path(row, folder = 'Dataset/images/image_train'):
+def get_image_path(row, folder = 'Dataset/images/image_train', as_string=False):
     filename = f"image_{row.imageid}_product_{row.productid}.jpg"
     path = Path(folder) / filename
+    if as_string:
+        path = str(path)
     return path
 
 

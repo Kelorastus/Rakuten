@@ -29,15 +29,13 @@ Useful:
 ## To add new dependencies
 
 1. Activate the virtual environment (if not yet done in the current terminal): from the folder of this repository, run `source venv/bin/activate`.
-2. For example, to add the dependency `wordcloud`: `pip install wordcloud` or `pip install wordcloud==1.9.4`. Copy its version number.
-3. To add the dependency `wordcloud` version 1.9.4: add the line `wordcloud==1.9.4` to the requirements file `requirements.txt`. Do this only for your chosen dependencies, NOT for the dependencies of your chosen dependencies. (If your chosen dependency depends on having / lacking an NVIDIA GPU, the line should instead be added to `requirements-gpu.txt` or `requirements-cpu.txt`, respectively.)
-4. Install: do step 5, 6, or 7 above in the section "Initialization on your machine".
-5. If you don't have `tensorflow`: `pip freeze > requirements.lock`.
-6. If you have `tensorflow`:
-    - if you have an NVIDIA GPU: `pip freeze > requirements-gpu.lock`.
-    - if you don't have an NVIDIA GPU: `pip freeze > requirements-cpu.lock`.
-7. Commit any modified `requirements...` file to main and push.
-8. Tell your collaborators: "Please pull main, then perform steps 4 to 7 of the file `README.md`, then restart VS Code or the Jupyter kernels of any open notebook."
+2. For example, to add the dependency `wordcloud`: `pip install wordcloud`.
+3. `pip freeze > requirements.lock` (If your dependencies depend on having / lacking an NVIDIA GPU, the filename should instead be `requirements-gpu` or `requirements-cpu`, respectively.)
+4. `pip freeze > requirements.txt` (If your chosen dependency depends on having / lacking an NVIDIA GPU, the line should instead be added to `requirements-gpu.txt` or `requirements-cpu.txt`, respectively.)
+5. Using the "Source Control" tab of VS Code, check your changes to the file modified at step 4 (with extension `txt`).
+6. (optional but important) Remove from this file your added "secondary dependencies" (e.g., the dependencies of `wordcloud`), but keep your added "primary dependencies" (e.g. `wordcloud`).
+7. Commit any modified `requirements...` file and push.
+8.  If not on main, do a pull request. If on main, tell your collaborators: "Please pull main, then perform steps 4 to 7 of the file `README.md`, then restart VS Code or the Jupyter kernels of any open notebook."
 
 ## Contributing guidelines
 
@@ -73,8 +71,12 @@ Puis :
 - revenir sur main
 - `git fetch origin`
 - `git reset --hard origin/main` (c'est une commande irréversible qui réinitialise ta branche main pour qu'elle soit pareille que celle de Github)
-- merge ta branche vers main
-- push main
-- supprimer ta branche de ton PC et du remote origin (Github) (comme recommandé après chaque merge)
+
+Puis deux possibilités.
+- choix 1 : faire une pull request depuis https://github.com/Kelorastus/Rakuten/pulls
+- choix 2 :
+    - merge ta branche vers main
+    - push main
+    - supprimer ta branche de ton PC et du remote origin (Github) (comme recommandé après chaque merge)
 
 C'est pour éviter d'avoir à faire cette manipulation qu'on préfère utiliser une branche par personne. Sinon il faut bien penser à pull main avant de commit sur main, puis à push rapidement.
