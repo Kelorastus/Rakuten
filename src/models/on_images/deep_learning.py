@@ -1,8 +1,12 @@
+from matplotlib import pyplot as plt
+import numpy as np
 import pandas as pd
 from pathlib import Path
+import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers, regularizers
 from tensorflow.keras.layers import Dense, Embedding
+from tensorflow.keras.models import Model
 
 
 def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classes = 27):
@@ -142,9 +146,8 @@ def grad_cam(image, model, layer_name):
     return np.clip(superimposed_image, 0, 1), predicted_class
 
 
-def show_grad_cam_cnn(images, model):
+def show_grad_cam_cnn(images, model, conv_layers):
     number_of_images = images.shape[0]
-    conv_layers = [layer.name for layer in model.layers if isinstance(layer, Conv2D)]
 
     plt.figure(figsize=(16,16))
 
