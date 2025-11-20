@@ -1,9 +1,12 @@
+from matplotlib import pyplot as plt
+import numpy as np
 import pandas as pd
 from pathlib import Path
-import  tensorflow as tf
+import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers, regularizers
 from tensorflow.keras.layers import Dense, Embedding
+from tensorflow.keras.models import Model
 
 
 def define_model(text_vectorizer, pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classes = 27):  #TODO: was copied from DL_on_img
@@ -191,3 +194,86 @@ def log_experiment(tracker_dict, loaded_model=False, log_file_path='artifacts/on
     # Sauvegarder le fichier mis à jour
     logs_df.to_parquet(log_file)
     print(f"Log pour l'expérience arch_version {current_arch_version} ajouté dans {log_file_path} .")
+
+
+def grad_cam(input_sample_dict, model, layer_name):
+    """
+    input_sample_dict : Dictionnaire contenant UNE seule entrée pour chaque modalité (pas de dimension batch)
+    Ex: {'image_input': (500,500,3), 'text_input': (Shape...), ...}
+    """
+
+    # 1. Récupérer la couche cible
+    layer = model.get_layer(layer_name)
+
+    # 2. Modèle Grad-CAM (Inputs globaux -> [Sortie couche conv, Sortie prédiction])
+    grad_model = Model(inputs=model.input, outputs=[layer.output, model.output])
+
+    # 3. Préparer le batch de 1 pour le modèle
+    # On ajoute une dimension (axis=0) à TOUTES les entrées du dictionnaire
+    input_batch = {k: tf.expand_dims(v, axis=0) for k, v in input_sample_dict.items()}
+
+    # 4. Calcul des gradients
+    with tf.GradientTape() as tape:
+        # On passe le dictionnaire complet au modèle
+        conv_outputs, predictions = grad_model(input_batch)
+        predicted_class = tf.argmax(predictions[0])
+        loss = predictions[:, predicted_class]
+
+    # 5. Gradients & Heatmap (Le reste est identique au standard)
+    grads = tape.gradient(loss, conv_outputs)
+    pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+
+    conv_outputs = conv_outputs[0]
+    heatmap = tf.reduce_sum(tf.multiply(pooled_grads, conv_outputs), axis=-1)
+    heatmap = tf.maximum(heatmap, 0)
+    if tf.math.reduce_max(heatmap) != 0: # Sécurité division par zero
+        heatmap /= tf.math.reduce_max(heatmap)
+    heatmap = heatmap.numpy()
+
+    # 6. Récupération de l'image d'origine pour la superposition
+    # Elle est dans le dictionnaire
+    original_image = input_sample_dict['image_input'].numpy() # (500, 500, 3)
+
+    # Resize heatmap
+    heatmap_resized = tf.image.resize(heatmap[..., np.newaxis], (original_image.shape[0], original_image.shape[1])).numpy()
+    heatmap_resized = np.squeeze(heatmap_resized, axis=-1)
+
+    # Colorisation
+    heatmap_colored = plt.cm.jet(heatmap_resized)[..., :3]
+
+    # Superposition (Image doit être entre 0 et 255)
+    superimposed_image = heatmap_colored * 0.6 + original_image / 255.0
+
+    return np.clip(superimposed_image, 0, 1), predicted_class
+
+
+def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers):
+    # On déduit le nombre d'images via une des clés (ex: 'image_input')
+    number_of_images = inputs_batch_dict['image_input'].shape[0]
+
+    plt.figure(figsize=(16, 4 * len(conv_layers))) # Ajustement taille hauteur
+
+    for j, layer_name in enumerate(conv_layers):
+        for i in range(number_of_images):
+
+            # --- C'EST ICI QUE TOUT SE JOUE ---
+            # On crée un dictionnaire pour le i-ème échantillon uniquement
+            single_sample = {key: value[i] for key, value in inputs_batch_dict.items()}
+            # ----------------------------------
+
+            subplot_index = i + 1 + j * number_of_images
+            plt.subplot(len(conv_layers), number_of_images, subplot_index)
+
+            try:
+                grad_cam_image, predicted_class = grad_cam(single_sample, model, layer_name)
+
+                plt.imshow(grad_cam_image)
+                plt.title(f'{layer_name}\nPred: {predicted_class}')
+            except Exception as e:
+                print(f"Erreur sur {layer_name}: {e}")
+                # Parfois les couches "project" ont des dimensions bizarres, utile pour debug
+
+            plt.axis("off")
+
+    plt.tight_layout()
+    plt.show()
