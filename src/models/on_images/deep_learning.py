@@ -149,9 +149,9 @@ def grad_cam(image, model, layer_name):
 def show_grad_cam_cnn(images, model, conv_layers):
     number_of_images = images.shape[0]
 
-    plt.figure(figsize=(16,16))
+    plt.figure(figsize=(16, 4 * len(conv_layers)))
 
-    for j, layer in enumerate(conv_layers):
+    for j, layer_name in enumerate(conv_layers):
 
         for i in range(number_of_images):
 
@@ -159,11 +159,10 @@ def show_grad_cam_cnn(images, model, conv_layers):
             plt.subplot(len(conv_layers), number_of_images, subplot_index)
 
             # Obtenir l'image avec la carte de chaleur superposée
-            grad_cam_image, predicted_class = grad_cam(images[i], model, layer)
+            grad_cam_image, predicted_class = grad_cam(images[i], model, layer_name)
 
-            # Afficher l'image avec Grad-CAM
-            plt.title(f'Grad-CAM {layer}')
             plt.imshow(grad_cam_image)
+            plt.title(f'{layer_name}\nPred: {predicted_class}')
             plt.axis("off")
 
     plt.show()
