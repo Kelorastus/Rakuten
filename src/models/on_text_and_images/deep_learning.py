@@ -251,18 +251,29 @@ def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers):
     # On déduit le nombre d'images via une des clés (ex: 'image_input')
     number_of_images = inputs_batch_dict['image_input'].shape[0]
 
-    plt.figure(figsize=(16, 4 * len(conv_layers))) # Ajustement taille hauteur
+    plt.figure(figsize=(16, 4 * (len(conv_layers) + 1)))
 
+    # row 0 of subplots (Original Images) ---
+    for i in range(number_of_images):
+        plt.subplot(len(conv_layers) + 1, number_of_images, i + 1)
+
+        # Get image and convert to displayable format (assuming 0-255 range based on your previous code)
+        img_display = inputs_batch_dict['image_input'][i].numpy().astype("uint8")
+
+        plt.imshow(img_display)
+        plt.title("Original")
+        plt.axis("off")
+
+    # rows of grad-cam subplots
     for j, layer_name in enumerate(conv_layers):
         for i in range(number_of_images):
 
-            # --- C'EST ICI QUE TOUT SE JOUE ---
             # On crée un dictionnaire pour le i-ème échantillon uniquement
             single_sample = {key: value[i] for key, value in inputs_batch_dict.items()}
             # ----------------------------------
 
-            subplot_index = i + 1 + j * number_of_images
-            plt.subplot(len(conv_layers), number_of_images, subplot_index)
+            subplot_index = i + 1 + (j + 1) * number_of_images
+            plt.subplot(len(conv_layers) + 1, number_of_images, subplot_index)
 
             try:
                 grad_cam_image, predicted_class = grad_cam(single_sample, model, layer_name)

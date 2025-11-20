@@ -7,6 +7,7 @@ from tensorflow import keras
 from tensorflow.keras import layers, regularizers
 from tensorflow.keras.layers import Dense, Embedding
 from tensorflow.keras.models import Model
+import re
 
 
 def define_model(pHash_vocab_size, md5_vocab_size, n_cols_tabular=24, num_classes = 27):
@@ -151,12 +152,24 @@ def show_grad_cam_cnn(images, model, conv_layers):
 
     plt.figure(figsize=(16, 4 * len(conv_layers)))
 
+    # row 0 of subplots (Original Images) ---
+    for i in range(number_of_images):
+        plt.subplot(len(conv_layers) + 1, number_of_images, i + 1)
+
+        # Get image and convert to displayable format (assuming 0-255 range based on your previous code)
+        img_display = images[i].numpy().astype("uint8")
+
+        plt.imshow(img_display)
+        plt.title("Original")
+        plt.axis("off")
+
+    # rows of grad-cam subplots
     for j, layer_name in enumerate(conv_layers):
 
         for i in range(number_of_images):
 
-            subplot_index = i + 1 + j * number_of_images
-            plt.subplot(len(conv_layers), number_of_images, subplot_index)
+            subplot_index = i + 1 + (j + 1) * number_of_images
+            plt.subplot(len(conv_layers) + 1, number_of_images, subplot_index)
 
             # Obtenir l'image avec la carte de chaleur superposée
             grad_cam_image, predicted_class = grad_cam(images[i], model, layer_name)
@@ -166,3 +179,30 @@ def show_grad_cam_cnn(images, model, conv_layers):
             plt.axis("off")
 
     plt.show()
+
+
+def get_efficientnet_selection(all_layers):
+    """Select most relevant layer names for grad-cam."""
+    selected = {}
+
+    # 1. Always include the final convolution
+    if 'top_conv' in all_layers:
+        selected['top'] = 'top_conv'
+
+    # 2. Iterate to find the last "project_conv" of each Major Block
+    for layer_name in all_layers:
+        # We look for patterns like "block2b_..." or "block6h_..."
+        # We only care about the number (2, 6, etc.)
+        match = re.search(r'block(\d+)[a-z]_project_conv', layer_name)
+
+        if match:
+            block_num = match.group(1) # e.g., "2" or "6"
+
+            # Because the list is sorted, the loop will encounter
+            # block6a, then 6b, ... then 6h.
+            # We simply keep overwriting 'block6', so the last one wins.
+            selected[f'block{block_num}'] = layer_name
+
+    # 3. Sort them to maintain network order (Block 1 -> Block 6 -> Top)
+    sorted_layers = sorted(selected.items(), key=lambda x: x[0])
+    return [name for key, name in sorted_layers]
