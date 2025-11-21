@@ -248,7 +248,47 @@ def grad_cam(input_sample_dict, model, layer_name):
     return np.clip(superimposed_image, 0, 1), predicted_class
 
 
-def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_encoder, target_encoder, save_plot=False):
+raw_mapping_text="""2583 équipements de piscine
+1560 meubles, chaises, matelas, bibelots
+1300 modélisme, drones, caméras type go-pro
+2060 décorations d'intérieur, souvent lumineuses
+2522 papeterie
+1280 peluches
+2403 livres, BD, mangas (souvent occasion/anciens)
+2280 journaux, magazines, livres documentaires
+1920 objets en tissu, linge de maison
+1160 cartes à jouer et à collectionner
+1320 accessoires pratiques pour bébés
+10 livres (poche, romans)
+2705 livres (beaux livres, art)
+1140 figurines pour enfants
+2582 accessoires de jardin
+40 jeux-vidéo 'retro' et accessoires
+2585 accessoires pour la maison (bricolage/outils)
+1302 accessoires sportifs et voyage enfants
+1281 jeux de société pour enfants
+50 accessoires gaming, câbles
+2462 jeux-vidéo, consoles, accessoires
+2905 jeux-vidéo PC (boite/téléchargement)
+60 consoles de jeux-vidéo
+2220 accessoires pour animaux
+1301 jeux/accessoires nouveaux nés
+1940 nourriture (conserve/sous vide)
+1180 jeux de rôle, plateau, figurines"""
+
+CATEGORY_MAPPING = {}
+for line in raw_mapping_text.strip().split('\n'):
+    if line.strip():
+        # .split(' ', 1) splits only on the FIRST space.
+        # The first part is the ID, the rest is the description.
+        code_str, description = line.strip().split(' ', 1)
+
+        # We store the key as INT to match LabelEncoder classes usually
+        # If your classes are strings, remove int()
+        CATEGORY_MAPPING[int(code_str)] = description
+
+
+def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_encoder, target_encoder, save_plot=False, category_mapping=CATEGORY_MAPPING):
     """
     Affiche les images originales, leurs métadonnées et les Grad-CAM.
 
@@ -259,6 +299,7 @@ def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_e
         true_labels: Les vrais labels (One-Hot encoded).
         hash_encoder: L'OrdinalEncoder pour décoder les MD5.
         target_encoder: Le LabelEncoder pour décoder les classes (Int -> String).
+        category_mapping: dict describing classes.
         save_plot: Booléen pour sauvegarder l'image.
     """
     # On déduit le nombre d'images via une des clés
@@ -286,10 +327,17 @@ def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_e
         # Decode True Label (One-Hot -> Class Name)
         # true_labels[i] est un vecteur [0, 0, 1, 0...]. On cherche l'index du 1.
         true_index = np.argmax(true_labels[i])
-        # On récupère le nom de la classe via le LabelEncoder
-        class_name = target_encoder.classes_[true_index]
+        class_code = target_encoder.classes_[true_index] # e.g. 2583
 
-        plt.title(f"True: {class_name}\nMD5: {str(md5_str)[:6]}...", fontsize=10)
+        # Get description from dict (Handle potential missing keys safely)
+        # We assume class_code is the same type as keys in category_mapping (int)
+        class_desc = category_mapping.get(int(class_code), "Unknown")
+
+        # Shorten description if too long for title
+        # if len(class_desc) > 30:
+        #     class_desc = class_desc[:27] + "..."
+
+        plt.title(f"True: {class_code}\n{class_desc}", fontsize=9)
         plt.axis("off")
 
     # --- ROWS 1 to N : Grad-CAM ---
@@ -305,13 +353,18 @@ def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_e
             try:
                 grad_cam_image, predicted_index = grad_cam(single_sample, model, layer_name)
 
-                # Decode Predicted Label (Integer Index -> Class Name)
-                # predicted_index est déjà un entier (sortie d'argmax dans grad_cam)
-                pred_name = target_encoder.classes_[predicted_index]
+                pred_code = target_encoder.classes_[predicted_index]
+                pred_desc = category_mapping.get(int(pred_code), "Unknown") # <--- Get Description
+
+                # if len(pred_desc) > 20: pred_desc = pred_desc[:17] + "..."
 
                 plt.imshow(grad_cam_image)
 
-                plt.title(f'{layer_name}\nPredicted: {pred_name}', fontsize=10)
+                true_index = np.argmax(true_labels[i])
+                color = 'green' if predicted_index == true_index else 'red'
+
+                # Update Title with description
+                plt.title(f'{layer_name}\nPredicted: {pred_code}\n{pred_desc}', color=color, fontsize=8)
 
             except Exception as e:
                 print(f"Erreur sur {layer_name} image {i}: {e}")
