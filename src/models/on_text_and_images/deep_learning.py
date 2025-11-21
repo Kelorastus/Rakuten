@@ -248,14 +248,26 @@ def grad_cam(input_sample_dict, model, layer_name):
     return np.clip(superimposed_image, 0, 1), predicted_class
 
 
-def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_encoder, save_plot=False):
-    # On déduit le nombre d'images via une des clés (ex: 'image_input')
+def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_encoder, target_encoder, save_plot=False):
+    """
+    Affiche les images originales, leurs métadonnées et les Grad-CAM.
+
+    Args:
+        inputs_batch_dict: Le batch d'entrées (dictionnaire).
+        model: Le modèle Keras.
+        conv_layers: Liste des noms de couches à visualiser.
+        true_labels: Les vrais labels (One-Hot encoded).
+        hash_encoder: L'OrdinalEncoder pour décoder les MD5.
+        target_encoder: Le LabelEncoder pour décoder les classes (Int -> String).
+        save_plot: Booléen pour sauvegarder l'image.
+    """
+    # On déduit le nombre d'images via une des clés
     number_of_images = inputs_batch_dict['image_input'].shape[0]
     hashes = []
 
     plt.figure(figsize=(16, 4 * (len(conv_layers) + 1)))
 
-    # row 0 of subplots (Original Images + Metadata) ---
+    # --- ROW 0 : Original Images + Metadata ---
     for i in range(number_of_images):
         plt.subplot(len(conv_layers) + 1, number_of_images, i + 1)
 
@@ -264,44 +276,56 @@ def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_e
         plt.imshow(img_display)
 
         # Decode MD5 (Integer -> String)
-        encoded_val = int(inputs_batch_dict['md5_input'][i]) # Get the integer
-
-        if encoded_val == -1: # Handle unknown values (-1)
-            md5_str = None
+        encoded_val = int(inputs_batch_dict['md5_input'][i])
+        if encoded_val == -1:
+            md5_str = "Unknown"
         else:
-            # Access the list of categories for the 2nd column (index 1 is MD5)
             md5_str = hash_encoder.categories_[1][encoded_val]
         hashes.append(md5_str)
 
-        plt.title(f"Original: {true_labels[i]}", fontsize=9)
+        # Decode True Label (One-Hot -> Class Name)
+        # true_labels[i] est un vecteur [0, 0, 1, 0...]. On cherche l'index du 1.
+        true_index = np.argmax(true_labels[i])
+        # On récupère le nom de la classe via le LabelEncoder
+        class_name = target_encoder.classes_[true_index]
+
+        plt.title(f"True: {class_name}\nMD5: {str(md5_str)[:6]}...", fontsize=10)
         plt.axis("off")
 
-    # rows of grad-cam subplots
+    # --- ROWS 1 to N : Grad-CAM ---
     for j, layer_name in enumerate(conv_layers):
         for i in range(number_of_images):
 
-            # On crée un dictionnaire pour le i-ème échantillon uniquement
+            # On isole un échantillon unique pour grad_cam
             single_sample = {key: value[i] for key, value in inputs_batch_dict.items()}
-            # ----------------------------------
 
             subplot_index = i + 1 + (j + 1) * number_of_images
             plt.subplot(len(conv_layers) + 1, number_of_images, subplot_index)
 
             try:
-                grad_cam_image, predicted_class = grad_cam(single_sample, model, layer_name)
+                grad_cam_image, predicted_index = grad_cam(single_sample, model, layer_name)
+
+                # Decode Predicted Label (Integer Index -> Class Name)
+                # predicted_index est déjà un entier (sortie d'argmax dans grad_cam)
+                pred_name = target_encoder.classes_[predicted_index]
 
                 plt.imshow(grad_cam_image)
-                plt.title(f'{layer_name}\nPred: {predicted_class}')
+
+                plt.title(f'{layer_name}\nPredicted: {pred_name}', fontsize=10)
+
             except Exception as e:
-                print(f"Erreur sur {layer_name}: {e}")
-                # Parfois les couches "project" ont des dimensions bizarres, utile pour debug
+                print(f"Erreur sur {layer_name} image {i}: {e}")
+                plt.text(0.5, 0.5, "Error", ha='center', va='center')
 
             plt.axis("off")
 
     plt.tight_layout()
+
     if save_plot:
         timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         plt.savefig(f"gradcam_{timestamp}.png", dpi=300, bbox_inches='tight')
+        print(f"Plot saved as gradcam_{timestamp}.png")
+
     plt.show()
 
     return hashes
