@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+import datetime
 from pathlib import Path
 import tensorflow as tf
 from tensorflow import keras
@@ -247,21 +248,32 @@ def grad_cam(input_sample_dict, model, layer_name):
     return np.clip(superimposed_image, 0, 1), predicted_class
 
 
-def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers):
+def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_encoder, save_plot=False):
     # On déduit le nombre d'images via une des clés (ex: 'image_input')
     number_of_images = inputs_batch_dict['image_input'].shape[0]
+    hashes = []
 
     plt.figure(figsize=(16, 4 * (len(conv_layers) + 1)))
 
-    # row 0 of subplots (Original Images) ---
+    # row 0 of subplots (Original Images + Metadata) ---
     for i in range(number_of_images):
         plt.subplot(len(conv_layers) + 1, number_of_images, i + 1)
 
-        # Get image and convert to displayable format (assuming 0-255 range based on your previous code)
+        # Display Image
         img_display = inputs_batch_dict['image_input'][i].numpy().astype("uint8")
-
         plt.imshow(img_display)
-        plt.title("Original")
+
+        # Decode MD5 (Integer -> String)
+        encoded_val = int(inputs_batch_dict['md5_input'][i]) # Get the integer
+
+        if encoded_val == -1: # Handle unknown values (-1)
+            md5_str = None
+        else:
+            # Access the list of categories for the 2nd column (index 1 is MD5)
+            md5_str = hash_encoder.categories_[1][encoded_val]
+        hashes.append(md5_str)
+
+        plt.title(f"Original: {true_labels[i]}", fontsize=9)
         plt.axis("off")
 
     # rows of grad-cam subplots
@@ -287,4 +299,9 @@ def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers):
             plt.axis("off")
 
     plt.tight_layout()
+    if save_plot:
+        timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        plt.savefig(f"gradcam_{timestamp}.png", dpi=300, bbox_inches='tight')
     plt.show()
+
+    return hashes
