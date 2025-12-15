@@ -268,8 +268,8 @@ raw_mapping_text="""2583 équipements de piscine
 1302 accessoires sportifs et voyage enfants
 1281 jeux de société pour enfants
 50 accessoires gaming, câbles
-2462 jeux-vidéo, consoles, accessoires
-2905 jeux-vidéo PC (boite/téléchargement)
+2462 jeux vidéo, consoles, accessoires
+2905 jeux vidéo PC (boite/téléchargement)
 60 consoles de jeux-vidéo
 2220 accessoires pour animaux
 1301 jeux/accessoires nouveaux nés
