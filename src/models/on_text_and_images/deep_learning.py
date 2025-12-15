@@ -263,7 +263,7 @@ raw_mapping_text="""2583 équipements de piscine
 2705 livres (beaux livres, art)
 1140 figurines pour enfants
 2582 accessoires de jardin
-40 jeux-vidéo 'retro' et accessoires
+40 jeux-vidéo 'rétro' et accessoires
 2585 accessoires pour la maison (bricolage/outils)
 1302 accessoires sportifs et voyage enfants
 1281 jeux de société pour enfants
@@ -272,7 +272,7 @@ raw_mapping_text="""2583 équipements de piscine
 2905 jeux vidéo PC (boite/téléchargement)
 60 consoles de jeux-vidéo
 2220 accessoires pour animaux
-1301 jeux/accessoires nouveaux nés
+1301 jeux/accessoires nouveaux-nés
 1940 nourriture (conserve/sous vide)
 1180 jeux de rôle, plateau, figurines"""
 
