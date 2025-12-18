@@ -25,3 +25,7 @@ Concernant les modalités incluant des images, du transfer learning a été empl
 Pour l'interprétabilité du deep learning par rapport aux images, nous avons utilisé Grad-CAM.
 
 Nous avons obtenu des résultats supérieurs au benchmark de texte et au benchmark d'images.
+
+# Installation
+
+Voir section "Initialization on your machine" du fichier `CONTRIBUTING.md`.
