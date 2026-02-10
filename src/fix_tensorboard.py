@@ -1,5 +1,6 @@
 """
 Script pour ranger après un usage erroné de TensorBoard.
+Ne pas lancer si vous ne comprenez pas ses effets !
 """
 
 import os
@@ -13,7 +14,7 @@ source_root = Path("artifacts/on_images/deep_learning/v1/tensor_board_wrong")
 target_root = Path("artifacts/on_images/deep_learning/v1/tensorboard_logs")
 # --------------------
 
-runs = {} # Dictionnaire pour regrouper les fichiers par PID
+runs = {}  # Dictionnaire pour regrouper les fichiers par PID
 
 print("Scan des fichiers de log...")
 # Parcourir les dossiers train et validation
@@ -26,11 +27,11 @@ for log_type in ["train", "validation"]:
         try:
             # Extraire le PID du nom de fichier (ex: 7025)
             # events.out.tfevents.1759395635.pop-os.7025.0.v2
-            pid = filename.split('.')[-3]
+            pid = filename.split(".")[-3]
 
             # Initialiser le dictionnaire si c'est la première fois qu'on voit ce PID
             if pid not in runs:
-                runs[pid] = {'train': [], 'validation': []}
+                runs[pid] = {"train": [], "validation": []}
 
             # Ajouter le chemin complet du fichier à la bonne liste
             runs[pid][log_type].append(source_dir / filename)

@@ -29,3 +29,98 @@ Nous avons obtenu des résultats supérieurs au benchmark de texte et au benchma
 # Installation
 
 Voir section "Initialization on your machine" du fichier `CONTRIBUTING.md`.
+
+# Arborescence
+
+Rakuten
+├── artifacts : les artefacts des modèles de deep learning DL1, DL2, DL3 (modèles pré-entraînés, préprocesseurs au format joblib, logs de tensorboard, logs d'expériences au format parquet)
+│   ├── on_images
+│   │   └── deep_learning
+│   │       └── v1
+│   │           ├── 2025-10-02 experiments-v1.parquet : ancienne version du log d'expériences du modèle de deep learning DL1
+│   │           ├── best_model_sv-9_epoch_index-01_val_accuracy-0.6365_f1-0.6253.keras : meilleur modèle de deep learning sur images pour les architectures DL1
+│   │           └── *.keras : des autres modèles des architectures DL1
+│   ├── on_text
+│   │   └── deep_learning
+│   │       └── v1
+│   │           ├── best_model_arch-10_epoch_index-12_val_accuracy-0.8214_f1-0.8209.keras : meilleur modèle de deep learning sur texte pour les architectures DL2
+│   │           └── *.keras : des autres modèles des architectures DL2
+│   └── on_text_and_images
+│       └── deep_learning
+│           └── v1
+│               ├── best_model_arch-11_epoch_index-01_val_accuracy-0.8338_f1-0.8337.keras : meilleur modèle de deep learning sur texte et images pour les architectures DL3
+│               ├── *.keras : des autres modèles des architectures DL3
+│               ├── experiments.parquet : dernière version du log d'expériences de DL1, DL2, DL3
+│               ├── preprocessors : préprocesseurs des modèles de deep learning DL1, DL2, DL3
+│               │   ├── hash.joblib : préprocesseurs des variables de hashes d'images
+│               │   ├── tabular.joblib : préprocesseurs des variables numériques venant d'images et des longueurs de textes
+│               │   ├── target.joblib: préprocesseur de la variable cible
+│               │   └── text_vectorizer.joblib : préprocesseur d'une variable textuelle combinant les variables textuelles initiales
+│               ├── tensorboard_logs : derniers logs de tensorboard
+│               └── tensorboard_logs_v1 : logs de tensorboard pour une ancienne configuration
+├── CONTRIBUTING.md : instructions pour installer et/ou contribuer
+├── Dataset
+│   ├── images.zip : archive originale des images
+│   ├── images : contenu de l'archive images.zip
+│   │   ├── image_test
+│   │   │   └── *.jpg
+│   │   └── image_train
+│   │       └── *.jpg
+│   ├── X_test.csv : jeu de test original
+│   ├── X_train.csv : jeu d'entraînement original
+│   ├── Y_train.csv : variable cible du jeu d'entraînement original
+│   ├── X_en.csv
+│   ├── X_fr.csv
+│   ├── y_en.csv
+│   └── y_fr.csv
+├── Dataset2
+│   ├── df.parquet : jeu de données contenant le jeu d'entraînement original `X_train.csv` et sa variable cible `Y_train.csv` , étendu par feature engineering sur les images (via des calculs qui durent longtemps), créé depuis le notebook `notebooks/data_exploration/exploration_and_feature_engineering.ipynb`, et à charger par la fonction `load_extended_df` ou `load_reproducible_split` du fichier `src/preprocessing/core.py`
+│   ├── test_indices.parquet : indices du jeu de test d'un `train_test_split` fait sur `df.parquet` ; ce `train_test_split` est reproductible via la fonction `load_reproducible_split` du fichier `src/preprocessing/core.py`
+│   └── train_indices.parquet : indices du jeu d'entraînement d'un `train_test_split` fait sur `df.parquet` ; ce `train_test_split` est reproductible via la fonction `load_reproducible_split` du fichier `src/preprocessing/core.py`
+├── notebooks : notebooks Jupyter
+│   ├── data_exploration
+│   │   ├── exploration_and_feature_engineering.ipynb : feature engineering pour créer `Dataset2/df.parquet` et exploration de ses variables (y compris les variables du jeu de données original), mais principalement les variables liées aux images
+│   │   ├── images : quelques images créées par le notebook `exploration_and_feature_engineering.ipynb`
+│   │   │   ├── proportion de na dans description.png
+│   │   │   ├── wordcloud_description.png
+│   │   │   └── wordcloud_designation.png
+│   │   ├── Jessy.ipynb
+│   │   ├── Jimmy.ipynb
+│   │   ├── meilleur_modele_optimise_en.pkl
+│   │   ├── meilleur_modele_optimise_fr.pkl
+│   │   ├── nltk_data
+│   │   ├── vectorizer_optimise.pkl
+│   │   └── X_tfidf.npz
+│   ├── deep_learning_on_images
+│   │   └── DL1.ipynb : modèle DL1 de deep learning sur les images (entraînement, évaluation, Grad-CAM)
+│   ├── deep_learning_on_text
+│   │   └── DL2.ipynb : modèle DL2 de deep learning sur le texte (entraînement, évaluation)
+│   ├── deep_learning_on_text_and_images
+│   │   └── DL3.ipynb : modèle DL3 de deep learning sur texte et images (entraînement, évaluation, Grad-CAM)
+│   └── pre-processing
+│       └── Jimmy.ipynb
+├── README.md : contexte, réalisations, arborescence
+├── requirements.txt : dépendances essentielles (voir `CONTRIBUTING.md`)
+├── requirements.lock : dépendances essentielles et leurs dépendances (voir `CONTRIBUTING.md`)
+├── requirements-gpu.txt : dépendances essentielles pour tensorflow si GPU Nvidia (voir `CONTRIBUTING.md`)
+├── requirements-gpu.lock : dépendances essentielles pour tensorflow si GPU Nvidia, et leurs dépendances (voir `CONTRIBUTING.md`)
+├── requirements-cpu.lock : dépendances essentielles pour tensorflow sans GPU Nvidia (voir `CONTRIBUTING.md`)
+├── requirements-cpu.txt : dépendances essentielles pour tensorflow [sans GPU Nvidia], et leurs dépendances (voir `CONTRIBUTING.md`)
+└── src : modules et scripts python
+    ├── fix_import_and_cwd_in_notebooks.py : code pour réparer les imports dans les notebooks
+    ├── fix_tensorboard.py : script pour aider à la transition lors d'un changement de configuration de tensorboard
+    ├── models
+    │   ├── on_images
+    │   │   └── deep_learning.py : architecture du modèle DL1 de deep learning sur les images, et fonction pour Grad-CAM
+    │   ├── on_text
+    │   │   └── deep_learning.py : architecture du modèle DL2 de deep learning sur le texte
+    │   └── on_text_and_images
+    │       └── deep_learning.py : architecture du modèle DL3 de deep learning sur texte et images ; fonctions pour log d'expériences et pour Grad-CAM
+    └── preprocessing
+        ├── core.py : fonctions pour créer ou charger `Dataset2/df.parquet`
+        ├── image.py : fonctions liées aux images (chargement, feature engineering)
+        └── pipelines
+            ├── deep_learning.py : chargement et sauvegarde des préprocesseurs des modèles de deep learning DL1, DL2, DL3
+            ├── deep_learning_on_images.py : preprocessing du modèle DL1 de deep learning sur les images
+            ├── deep_learning_on_text.py : preprocessing du modèle DL2 de deep learning sur le texte
+            └── deep_learning_on_text_and_images.py : preprocessing du modèle DL3 de deep learning sur texte et images
