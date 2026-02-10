@@ -6,14 +6,16 @@
 2. Clone the repository.
 3. Create a virtual environment: in a terminal in the folder of this repository, run the command `python3 -m venv venv`.
 4. Activate it: `source venv/bin/activate`.
-5. If you don't need `tensorflow`: `pip install -r requirements.lock`.
 
-If you need `tensorflow`:
-6. If you don't have an NVIDIA GPU: `pip install -r requirements-cpu.lock`
-7. If you have an NVIDIA GPU:
+For the most stable and up-to-date version, you should only do step 5. Indeed, steps 6 and 7 are experimental and not frequently updated.
+
+5. If you want `tensorflow` and have an NVIDIA GPU:
     - Make sure your NVIDIA drivers are installed.
     - If you are on Windows: install WSL2 and the NVIDIA CUDA Driver for WSL. Then, open your WSL terminal (e.g., Ubuntu) and proceed as if you are on Linux, activating the environment of the repository as in step 4.
     - `pip install -r requirements-gpu.lock`
+
+6. (experimental) If you want `tensorflow` and don't have an NVIDIA GPU: `pip install -r requirements-cpu.lock -r requirements-cpu.txt -r requirements.lock -r requirements.txt`
+7. (experimental) If you don't want `tensorflow`: `pip install -r requirements.lock -r requirements.txt`.
 
 ## To clean up your venv
 
