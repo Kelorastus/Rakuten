@@ -1,6 +1,8 @@
 """
 Script pour générer automatiquement une nouvelle page Streamlit
 Usage: python generate_page.py
+
+Après lancement de ce script, merci de vérifier les changements générés dans le fichier app.py avant de les commit !
 """
 
 import os
