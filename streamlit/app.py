@@ -28,7 +28,7 @@ PAGES = {
     "🤖 Modèles & résultats": show_models,
     "🚀 Démo interactive": show_demo,
     "📈 Analyse du meilleur modèle": show_analyse_meilleur_modele,
-    "🎓 Conclusion & perspectives": show_conclusion
+    "🎓 Conclusion & perspectives": show_conclusion,
 }
 
 # Navigation
