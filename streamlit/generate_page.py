@@ -1,5 +1,5 @@
 """
-Script pour générer automatiquement une nouvelle page Streamlit
+Script pour générer automatiquement une nouvelle page Streamlit dans le dossier `parts` et mettre à jour le fichier `app.py`.
 Usage: python generate_page.py
 
 Après lancement de ce script, merci de vérifier les changements générés dans le fichier app.py avant de les commit !
