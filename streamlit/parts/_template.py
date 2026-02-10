@@ -1,11 +1,8 @@
-# présentation des données (volumétrie, architecture, ce qu'on a compris des données, etc.)
-# analyse des données avec figures de DataVizualization
-
 import streamlit as st
 
 
-def show_exploration():
-    st.title("📊 Analyse exploratoire")
+def show_partie():
+    st.title("Titre")
     st.info("🚧 Section en cours de développement")
 
     # st.header("Header")
@@ -29,4 +26,4 @@ def show_exploration():
 # Si exécuté directement (pour tester)
 if __name__ == "__main__":
     st.set_page_config(layout="wide")
-    show_exploration()
+    show_partie()
