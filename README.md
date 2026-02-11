@@ -139,3 +139,7 @@ Rakuten
         ├── generate_page.py : script pour générer un nouveau brouillon de fichier dans le dossier `parts`
         └── parts : pages de la présentation streamlit
             └── *.py
+
+# Documents "analyse, feature engineering, preprocess et modelisation..."
+
+Les documents "analyse, feature engineering, preprocess et modelisation ML+DL.ipynb" et "analyse.... avec visualisation ML" sont les mêmes. Le premier document donne le retour notebook du travail de transfert-learning multimodal avec pytorch tandis que le second donne le retour notebook de la visualisation de données, et du travail de machine learning uniquement sur du texte avec seulement des lignes en français et en anglais (séparement l'un de l'autre).
