@@ -24,7 +24,8 @@ from tensorflow import keras
 
 
 @st.cache_resource
-def preprocessing_DL3():
+def preprocessing_DL3(row_index=0):
+    #TODO: load only the picked row_index
     # parameters
     multimodal_artifacts_folder = Path(f'artifacts/on_text_and_images/deep_learning/v1')
     preprocessors_folder = multimodal_artifacts_folder
@@ -54,7 +55,7 @@ def preprocessing_DL3():
 @st.cache_resource
 def load_model_DL3():
     path = "artifacts/on_text_and_images/deep_learning/v1/best_model_arch-11_epoch_index-01_val_accuracy-0.8338_f1-0.8337.keras"
-    model = keras.models.load_model(champion_path)
+    model = keras.models.load_model(path)
     return model
 
 
@@ -63,6 +64,9 @@ def load_dataset():
     X_train, X_test, y_train, y_test = load_reproducible_split(folder = 'Dataset2')
     return X_train, X_test, y_train, y_test
 
+
+def predict():
+    pass
 
 
 def show_demo():
@@ -119,3 +123,9 @@ def show_demo():
 #             st.image("gradcam_overlay.jpg", caption="Grad-CAM")
 #     else:
 #         st.info("Faites d'abord une prédiction dans la démo")
+
+
+# Si exécuté directement (pour tester)
+if __name__ == "__main__":
+    st.set_page_config(layout="wide")
+    show_demo()
