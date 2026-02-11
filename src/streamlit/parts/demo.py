@@ -17,24 +17,24 @@ prédire le produit à cet indice (ou pour tout l'échantillon ?)
 
 import streamlit as st
 from pathlib import Path
+from src.models.on_text_and_images.deep_learning import CATEGORY_MAPPING
 from src.preprocessing.core import load_reproducible_split
 from src.preprocessing.pipelines.deep_learning import load_preprocessors
 from src.preprocessing.pipelines.deep_learning_on_text_and_images import preprocess_features
 from tensorflow import keras
 
 
-@st.cache_resource
-def preprocessing_DL3(X_test, y_test, row_index=0):
+@st.cache_data
+def load_Dataset2():
+    X_train, X_test, y_train, y_test = load_reproducible_split(folder = 'Dataset2')
+    return X_train, X_test, y_train, y_test
+
+
+def preprocessing_DL3(X_test, y_test):
     # parameters
     multimodal_artifacts_folder = Path(f'artifacts/on_text_and_images/deep_learning/v1')
     preprocessors_folder = multimodal_artifacts_folder
-    rebalance_with_weights = True  # True is useful if some classes are ignored by the model. In that case, small_train_sample should be False.
-    augment=False  # If True, augment data for training
     BATCH_SIZE = 32
-    RANDOM_SEED = 42
-
-    X_test = X_test.iloc[row_index:row_index+1]
-    y_test = y_test.iloc[row_index:row_index+1]
 
     preprocessors = load_preprocessors(names=['target','tabular','hash','text_vectorizer'], artifacts_folder=preprocessors_folder)
 
@@ -43,7 +43,7 @@ def preprocessing_DL3(X_test, y_test, row_index=0):
     if new_preprocessors:
         print(f"error: some preprocessors got fitted on the testing set, so they were probably not handled properly. {new_preprocessors=}")
 
-    return test_ds
+    return test_ds, y_test_ohe, preprocessors
 
 
 @st.cache_resource
@@ -53,21 +53,43 @@ def load_model_DL3():
     return model
 
 
-@st.cache_data
-def load_dataset():
-    X_train, X_test, y_train, y_test = load_reproducible_split(folder = 'Dataset2')
-    return X_train, X_test, y_train, y_test
+def np_array_to_int(np_array):
+    return int(np_array[0])
 
 
-def predict():
-    pass
+def predict_DL3(model, test_ds, y_test_ohe, preprocessors):
+    y_pred = model.predict(test_ds)
+    y_pred_class = np_array_to_int(preprocessors['target'].inverse_transform(y_pred.argmax(axis=1)))
+    y_test_class = np_array_to_int(preprocessors['target'].inverse_transform(y_test_ohe.argmax(axis=1)))
+    return y_pred_class, y_test_class
+
+
+def get_class_description(class_code: int):
+    description = CATEGORY_MAPPING.get(class_code, "inconnue")
+    return description
 
 
 def show_demo():
-    st.title("🚀 Démo Interactive")
+    st.title("🚀 Démo interactive")
     st.info("🚧 Section en cours de développement")
 
-#     model = load_model()
+    row_index=0 #TODO: user-picked
+    #TODO: show chosen row
+
+    X_train, X_test, y_train, y_test = load_Dataset2()
+
+    X_test_row = X_test.iloc[row_index:row_index+1]
+    y_test_row = y_test.iloc[row_index:row_index+1]
+
+
+
+    test_ds, y_test_ohe, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
+    model = load_model_DL3()
+    y_pred_class, y_test_class = predict_DL3(model, test_ds, y_test_ohe, preprocessors)
+    y_pred_description = get_class_description(y_pred_class)
+    y_test_description = get_class_description(y_test_class)
+
+    st.markdown(f"Catégorie prédite : {y_pred_class} - {y_pred_description}.\n\nCatégorie réelle : {y_test_class} - {y_test_description}.")
 
 #     # Sélection d'un échantillon
 #     sample_choice = st.selectbox(

@@ -3,6 +3,12 @@
 # streamlit run src/streamlit/app.py
 
 import streamlit as st
+import sys
+from pathlib import Path
+
+# Quick fix for import issues
+repo_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(repo_root))
 
 st.set_page_config(
     page_title="Rakuten - Catégorisation Multi-modale",
@@ -26,8 +32,7 @@ try:
 except ImportError as e:
     demo_available = False
     def show_demo():
-        st.title("🚀 Démo interactive")
-        st.header("🚧 Erreur")
+        st.error("🚧 Démo non disponible :\n\n{e}")
 
 # Configuration de la navigation : partie → fonction montrant la partie
 PAGES = {
