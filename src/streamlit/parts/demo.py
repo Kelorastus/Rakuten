@@ -23,6 +23,12 @@ from src.preprocessing.pipelines.deep_learning_on_text_and_images import preproc
 from tensorflow import keras
 
 
+@st.cache_data
+def load_dataset():
+    X_train, X_test, y_train, y_test = load_reproducible_split(folder = 'Dataset2')
+    return X_train, X_test, y_train, y_test
+
+
 def preprocessing_DL3(X_test, y_test, row_index=0):
     # parameters
     multimodal_artifacts_folder = Path(f'artifacts/on_text_and_images/deep_learning/v1')
@@ -47,12 +53,6 @@ def load_model_DL3():
     path = "artifacts/on_text_and_images/deep_learning/v1/best_model_arch-11_epoch_index-01_val_accuracy-0.8338_f1-0.8337.keras"
     model = keras.models.load_model(path)
     return model
-
-
-@st.cache_data
-def load_dataset():
-    X_train, X_test, y_train, y_test = load_reproducible_split(folder = 'Dataset2')
-    return X_train, X_test, y_train, y_test
 
 
 def predict_DL3(model, test_ds, y_test_ohe, preprocessors):
