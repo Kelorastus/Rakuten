@@ -84,26 +84,3 @@ def show_demo():
 #             st.image("gradcam_overlay.jpg", caption="Grad-CAM")
 #     else:
 #         st.info("Faites d'abord une prédiction dans la démo")
-
-
-# def show_conclusion():
-#     st.title("🎓 Conclusion & Perspectives")
-
-#     st.header("Résultats obtenus")
-#     st.image("screenshots/resultats_finaux.png")
-
-#     st.header("Lien avec la problématique métier")
-#     st.markdown("""
-#     - Amélioration de X% de la catégorisation
-#     - Réduction du temps de traitement
-#     - Impact sur l'expérience utilisateur
-#     """)
-
-#     st.header("Critiques & Perspectives")
-#     col1, col2 = st.columns(2)
-#     with col1:
-#         st.subheader("⚠️ Limites")
-#         st.markdown("- Temps de calcul\n- Déséquilibre des classes")
-#     with col2:
-#         st.subheader("🚀 Améliorations")
-#         st.markdown("- Augmentation de données\n- Ensemble de modèles")
