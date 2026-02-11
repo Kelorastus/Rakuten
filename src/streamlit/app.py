@@ -16,9 +16,18 @@ from parts.problematique import show_problematique
 from parts.exploration import show_exploration
 from parts.preprocessing import show_preprocessing
 from parts.models import show_models
-from parts.demo import show_demo
 from parts.analyse_meilleur_modele import show_analyse_meilleur_modele
 from parts.conclusion import show_conclusion
+
+# Handle the possibility that loading demo fails because of missing dependencies (tensorflow, ...)
+demo_available = True
+try:
+    from parts.demo import show_demo
+except ImportError as e:
+    demo_available = False
+    def show_demo():
+        st.title("🚀 Démo interactive")
+        st.header("🚧 Erreur")
 
 # Configuration de la navigation : partie → fonction montrant la partie
 PAGES = {
