@@ -41,10 +41,18 @@ Rakuten
 │   │           ├── best_model_sv-9_epoch_index-01_val_accuracy-0.6365_f1-0.6253.keras : meilleur modèle de deep learning sur images pour les architectures DL1
 │   │           └── *.keras : des autres modèles des architectures DL1
 │   ├── on_text
-│   │   └── deep_learning
+│   │   ├──deep_learning
 │   │       └── v1
 │   │           ├── best_model_arch-10_epoch_index-12_val_accuracy-0.8214_f1-0.8209.keras : meilleur modèle de deep learning sur texte pour les architectures DL2
 │   │           └── *.keras : des autres modèles des architectures DL2
+│   │   └── tfidf_baselines
+│   │       └── v1 : régénérer en lançant (`ml_tfidf_preprocessing.ipynb`).
+│   │           ├── X_train_vectors.npz : matrice TF‑IDF d’entraînement (trop volumineuse pour le repo 400mb)
+│   │           ├── X_valid_vectors.npz : matrice TF‑IDF de validation (trop volumineuse pour le repo 105mb)
+│   │           ├── y_train.npy : labels d’entraînement
+│   │           ├── y_valid.npy : labels de validation
+│   │           ├── label_names.json : liste des classes
+│   │           └── metadata.json : paramètres de génération des features
 │   └── on_text_and_images
 │       └── deep_learning
 │           └── v1
@@ -85,7 +93,7 @@ Rakuten
 │   │   │   ├── wordcloud_description.png
 │   │   │   └── wordcloud_designation.png
 │   │   ├── Jessy.ipynb
-│   │   ├── Jimmy.ipynb
+│   │   ├── exploration_listing_text_stats.ipynb : 
 │   │   ├── meilleur_modele_optimise_en.pkl
 │   │   ├── meilleur_modele_optimise_fr.pkl
 │   │   ├── nltk_data
@@ -97,8 +105,10 @@ Rakuten
 │   │   └── DL2.ipynb : modèle DL2 de deep learning sur le texte (entraînement, évaluation)
 │   ├── deep_learning_on_text_and_images
 │   │   └── DL3.ipynb : modèle DL3 de deep learning sur texte et images (entraînement, évaluation, Grad-CAM)
-│   └── pre-processing
-│       └── Jimmy.ipynb
+│   └── machine_learning_on_text
+│       ├── ml_tfidf_preprocessing.ipynb : prétraitement du texte + vectorisation TF‑IDF (mots + caractères)
+│       ├── ml_tfidf_models_comparison.ipynb : entraîne 4 modèles classiques sur les mêmes features TF‑IDF et   compare les scores
+│       └── ML.md : note de synthèse sur le preprocessing et la comparaison des modèles Machine Learning
 ├── README.md : contexte, réalisations, arborescence
 ├── requirements.txt : dépendances essentielles (voir `CONTRIBUTING.md`)
 ├── requirements.lock : dépendances essentielles et leurs dépendances (voir `CONTRIBUTING.md`)
