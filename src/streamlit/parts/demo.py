@@ -16,18 +16,53 @@ prédire le produit à cet indice (ou pour tout l'échantillon ?)
 """
 
 import streamlit as st
-# import torch
-# from PIL import Image
-# import numpy as np
-# # vos imports pour le modèle et grad-cam
+from pathlib import Path
+from src.preprocessing.core import load_reproducible_split
+from src.preprocessing.pipelines.deep_learning import load_preprocessors
+from src.preprocessing.pipelines.deep_learning_on_text_and_images import preprocess_features
+from tensorflow import keras
 
 
-# @st.cache_resource
-# def load_model():
-#     """Charge le modèle une seule fois"""
-#     model = torch.load("models/best_model.pth")
-#     model.eval()
-#     return model
+@st.cache_resource
+def preprocessing_DL3():
+    # parameters
+    multimodal_artifacts_folder = Path(f'artifacts/on_text_and_images/deep_learning/v1')
+    preprocessors_folder = multimodal_artifacts_folder
+    rebalance_with_weights = True  # True is useful if some classes are ignored by the model. In that case, small_train_sample should be False.
+    augment=False  # If True, augment data for training
+    BATCH_SIZE = 32
+    RANDOM_SEED = 42
+
+    preprocessors = load_preprocessors(names=['target','tabular','hash','text_vectorizer'], artifacts_folder=preprocessors_folder)
+
+    train_ds, new_preprocessors, class_weights, train_inputs_dict, y_train_ohe = preprocess_features(
+        X_train, y_train, preprocessors, full_X_train=full_X_train, full_y_train=full_y_train, shuffle=True,
+        BATCH_SIZE = BATCH_SIZE, rebalance_with_weights=rebalance_with_weights, augment=augment
+    )
+    preprocessors |= new_preprocessors
+    if new_preprocessors:
+        print(f"warning: preprocessors got fitted again, so they were probably not loaded properly. {new_preprocessors=}")
+
+    test_ds, new_preprocessors, class_weights_test, test_inputs_dict, y_test_ohe = preprocess_features(X_test, y_test, preprocessors, shuffle=False, BATCH_SIZE = BATCH_SIZE, rebalance_with_weights=False, augment=False)
+
+    if new_preprocessors:
+        print(f"error: some preprocessors got fitted on the testing set, so they were probably not handled properly. {new_preprocessors=}")
+
+    return test_ds
+
+
+@st.cache_resource
+def load_model_DL3():
+    path = "artifacts/on_text_and_images/deep_learning/v1/best_model_arch-11_epoch_index-01_val_accuracy-0.8338_f1-0.8337.keras"
+    model = keras.models.load_model(champion_path)
+    return model
+
+
+@st.cache_data
+def load_dataset():
+    X_train, X_test, y_train, y_test = load_reproducible_split(folder = 'Dataset2')
+    return X_train, X_test, y_train, y_test
+
 
 
 def show_demo():
