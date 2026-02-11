@@ -203,3 +203,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+notebooks/data_exploration/checkpoints/*.pt
+notebooks/data_exploration/get-pip.py
+requirements-cpu.lock
+Dataset/X_avec_desc_comp_et_langue.csv
+Dataset/X.csv
+notebooks/data_exploration/rakuten_multimodal_final.pt
