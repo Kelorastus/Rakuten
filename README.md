@@ -42,9 +42,9 @@ Rakuten
 │   │           └── *.keras : des autres modèles des architectures DL1
 │   ├── on_text
 │   │   ├──deep_learning
-│   │       └── v1
-│   │           ├── best_model_arch-10_epoch_index-12_val_accuracy-0.8214_f1-0.8209.keras : meilleur modèle de deep learning sur texte pour les architectures DL2
-│   │           └── *.keras : des autres modèles des architectures DL2
+│   │   │   └── v1
+│   │   │       ├── best_model_arch-10_epoch_index-12_val_accuracy-0.8214_f1-0.8209.keras : meilleur modèle de deep learning sur texte pour les architectures DL2
+│   │   │       └── *.keras : des autres modèles des architectures DL2
 │   │   └── tfidf_baselines
 │   │       └── v1 : régénérer en lançant (`ml_tfidf_preprocessing.ipynb`).
 │   │           ├── X_train_vectors.npz : matrice TF‑IDF d’entraînement (trop volumineuse pour le repo 400mb)
@@ -93,7 +93,7 @@ Rakuten
 │   │   │   ├── wordcloud_description.png
 │   │   │   └── wordcloud_designation.png
 │   │   ├── Jessy.ipynb
-│   │   ├── exploration_listing_text_stats.ipynb : 
+│   │   ├── exploration_listing_text_stats.ipynb :
 │   │   ├── meilleur_modele_optimise_en.pkl
 │   │   ├── meilleur_modele_optimise_fr.pkl
 │   │   ├── nltk_data
