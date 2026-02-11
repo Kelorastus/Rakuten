@@ -32,6 +32,7 @@ Voir section "Initialization on your machine" du fichier `CONTRIBUTING.md`.
 
 # Arborescence
 
+```
 Rakuten
 ├── artifacts : les artefacts des modèles de deep learning DL1, DL2, DL3 (modèles pré-entraînés, préprocesseurs au format joblib, logs de tensorboard, logs d'expériences au format parquet)
 │   ├── on_images
@@ -139,3 +140,4 @@ Rakuten
         ├── generate_page.py : script pour générer un nouveau brouillon de fichier dans le dossier `parts`
         └── parts : pages de la présentation streamlit
             └── *.py
+```
