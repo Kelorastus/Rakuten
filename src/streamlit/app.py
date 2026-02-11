@@ -31,6 +31,8 @@ PAGES = {
     "🎓 Conclusion & perspectives": show_conclusion,
 }
 
+st.sidebar.title("Projet Rakuten")
+
 # Navigation
-page = st.sidebar.selectbox("Navigation", list(PAGES.keys()))
+page = st.sidebar.radio("Navigation", list(PAGES.keys()))
 PAGES[page]()

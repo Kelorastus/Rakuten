@@ -5,7 +5,7 @@ import streamlit as st
 
 def show_problematique():
     # exemple fourni par le LLM Claude, à vérifier / retravailler
-    st.title("🎯 Problématique Rakuten")
+    st.title("🎯 Problématique")
     st.info("🚧 Section en cours de développement")
 
     st.header("Contexte")

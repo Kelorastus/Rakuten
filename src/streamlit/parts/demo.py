@@ -1,5 +1,19 @@
 # pour un élément du dataset, on obtient sa catégorie prédite par le meilleur modèle pré-entraîné
-# voire aussi grad-cam ?
+
+"""
+idées
+
+générer un échantillon aléatoire du dataset
+    ? quand l'utilisateur clique sur un bouton
+le montrer
+    ? st.dataframe
+        ? st.column_config.ImageColumn pour affichage des images
+    ? st.data_editor pour permettre à l'utilisateur de modifier l'échantillon
+demander à l'utilisateur de choisir un indice dans l'échantillon
+prédire le produit à cet indice (ou pour tout l'échantillon ?)
+    ? quand l'utilisateur clique sur un bouton
+? grad-cam
+"""
 
 import streamlit as st
 # import torch
