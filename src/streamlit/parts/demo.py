@@ -17,6 +17,7 @@ prédire le produit à cet indice (ou pour tout l'échantillon ?)
 
 import streamlit as st
 from pathlib import Path
+from src.preprocessing.image import get_image_path
 from src.models.on_text_and_images.deep_learning import CATEGORY_MAPPING
 from src.preprocessing.core import load_reproducible_split
 from src.preprocessing.pipelines.deep_learning import load_preprocessors
@@ -73,23 +74,37 @@ def show_demo():
     st.title("🚀 Démo interactive")
     st.info("🚧 Section en cours de développement")
 
-    row_index=0 #TODO: user-picked
-    #TODO: show chosen row
-
     X_train, X_test, y_train, y_test = load_Dataset2()
 
-    X_test_row = X_test.iloc[row_index:row_index+1]
+    # Product selection
+
+    row_index=0 #TODO: user-picked
+    X_test_row = X_test.iloc[row_index:row_index+1] # slice to get dataframe instead of series for tensorflow
     y_test_row = y_test.iloc[row_index:row_index+1]
 
+    # Show selected product data
+    st.text(f"Informations du produit sélectionné :")
+    st.dataframe(X_test_row)
 
+    # Show selected product image
+    st.text(f"Image du produit :")
+    image_path = get_image_path(X_test_row.iloc[0], folder = 'Dataset/images/image_train')
+    if image_path.exists():
+        st.image(image_path)
+    else:
+        st.text(f"Error: file not found: {image_path=}")
+        st.text(f"cwd: {Path('.').resolve()}")
+        st.text(f"folder: {image_path.parent.resolve()}")
 
+    # Prediction
     test_ds, y_test_ohe, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
     model = load_model_DL3()
     y_pred_class, y_test_class = predict_DL3(model, test_ds, y_test_ohe, preprocessors)
     y_pred_description = get_class_description(y_pred_class)
     y_test_description = get_class_description(y_test_class)
 
-    st.markdown(f"Catégorie prédite : {y_pred_class} - {y_pred_description}.\n\nCatégorie réelle : {y_test_class} - {y_test_description}.")
+    # TODO: turn this into a table
+    st.text(f"Catégorie prédite :\n{y_pred_class} - {y_pred_description}.\n\nCatégorie réelle :\n{y_test_class} - {y_test_description}.")
 
 #     # Sélection d'un échantillon
 #     sample_choice = st.selectbox(
