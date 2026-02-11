@@ -24,8 +24,7 @@ from tensorflow import keras
 
 
 @st.cache_resource
-def preprocessing_DL3(row_index=0):
-    #TODO: load only the picked row_index
+def preprocessing_DL3(X_test, y_test, row_index=0):
     # parameters
     multimodal_artifacts_folder = Path(f'artifacts/on_text_and_images/deep_learning/v1')
     preprocessors_folder = multimodal_artifacts_folder
@@ -34,15 +33,10 @@ def preprocessing_DL3(row_index=0):
     BATCH_SIZE = 32
     RANDOM_SEED = 42
 
-    preprocessors = load_preprocessors(names=['target','tabular','hash','text_vectorizer'], artifacts_folder=preprocessors_folder)
+    X_test = X_test.iloc[row_index:row_index+1]
+    y_test = y_test.iloc[row_index:row_index+1]
 
-    train_ds, new_preprocessors, class_weights, train_inputs_dict, y_train_ohe = preprocess_features(
-        X_train, y_train, preprocessors, full_X_train=full_X_train, full_y_train=full_y_train, shuffle=True,
-        BATCH_SIZE = BATCH_SIZE, rebalance_with_weights=rebalance_with_weights, augment=augment
-    )
-    preprocessors |= new_preprocessors
-    if new_preprocessors:
-        print(f"warning: preprocessors got fitted again, so they were probably not loaded properly. {new_preprocessors=}")
+    preprocessors = load_preprocessors(names=['target','tabular','hash','text_vectorizer'], artifacts_folder=preprocessors_folder)
 
     test_ds, new_preprocessors, class_weights_test, test_inputs_dict, y_test_ohe = preprocess_features(X_test, y_test, preprocessors, shuffle=False, BATCH_SIZE = BATCH_SIZE, rebalance_with_weights=False, augment=False)
 
