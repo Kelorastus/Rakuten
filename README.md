@@ -106,26 +106,26 @@ Rakuten
 ├── requirements-gpu.lock : dépendances essentielles pour tensorflow si GPU Nvidia, et leurs dépendances (voir `CONTRIBUTING.md`)
 ├── requirements-cpu.lock : dépendances essentielles pour tensorflow sans GPU Nvidia (voir `CONTRIBUTING.md`)
 ├── requirements-cpu.txt : dépendances essentielles pour tensorflow [sans GPU Nvidia], et leurs dépendances (voir `CONTRIBUTING.md`)
-├── src : modules et scripts python
-│   ├── fix_import_and_cwd_in_notebooks.py : code pour réparer les imports dans les notebooks
-│   ├── fix_tensorboard.py : script pour aider à la transition lors d'un changement de configuration de tensorboard
-│   ├── models
-│   │   ├── on_images
-│   │   │   └── deep_learning.py : architecture du modèle DL1 de deep learning sur les images, et fonction pour Grad-CAM
-│   │   ├── on_text
-│   │   │   └── deep_learning.py : architecture du modèle DL2 de deep learning sur le texte
-│   │   └── on_text_and_images
-│   │       └── deep_learning.py : architecture du modèle DL3 de deep learning sur texte et images ; fonctions pour log d'expériences et pour Grad-CAM
-│   └── preprocessing
-│       ├── core.py : fonctions pour créer ou charger `Dataset2/df.parquet`
-│       ├── image.py : fonctions liées aux images (chargement, feature engineering)
-│       └── pipelines
-│           ├── deep_learning.py : chargement et sauvegarde des préprocesseurs des modèles de deep learning DL1, DL2, DL3
-│           ├── deep_learning_on_images.py : preprocessing du modèle DL1 de deep learning sur les images
-│           ├── deep_learning_on_text.py : preprocessing du modèle DL2 de deep learning sur le texte
-│           └── deep_learning_on_text_and_images.py : preprocessing du modèle DL3 de deep learning sur texte et images
-└── streamlit
-    ├── app.py : présentation streamlit du projet
-    ├── generate_page.py : script pour générer un nouveau brouillon de fichier dans le dossier `parts`
-    └── parts : pages de la présentation streamlit
-        └── *.py
+└── src : modules et scripts python
+    ├── fix_import_and_cwd_in_notebooks.py : code pour réparer les imports dans les notebooks
+    ├── fix_tensorboard.py : script pour aider à la transition lors d'un changement de configuration de tensorboard
+    ├── models
+    │   ├── on_images
+    │   │   └── deep_learning.py : architecture du modèle DL1 de deep learning sur les images, et fonction pour Grad-CAM
+    │   ├── on_text
+    │   │   └── deep_learning.py : architecture du modèle DL2 de deep learning sur le texte
+    │   └── on_text_and_images
+    │       └── deep_learning.py : architecture du modèle DL3 de deep learning sur texte et images ; fonctions pour log d'expériences et pour Grad-CAM
+    │── preprocessing
+    │   ├── core.py : fonctions pour créer ou charger `Dataset2/df.parquet`
+    │   ├── image.py : fonctions liées aux images (chargement, feature engineering)
+    │   └── pipelines
+    │       ├── deep_learning.py : chargement et sauvegarde des préprocesseurs des modèles de deep learning DL1, DL2, DL3
+    │       ├── deep_learning_on_images.py : preprocessing du modèle DL1 de deep learning sur les images
+    │       ├── deep_learning_on_text.py : preprocessing du modèle DL2 de deep learning sur le texte
+    │       └── deep_learning_on_text_and_images.py : preprocessing du modèle DL3 de deep learning sur texte et images
+    └── streamlit
+        ├── app.py : présentation streamlit du projet
+        ├── generate_page.py : script pour générer un nouveau brouillon de fichier dans le dossier `parts`
+        └── parts : pages de la présentation streamlit
+            └── *.py
