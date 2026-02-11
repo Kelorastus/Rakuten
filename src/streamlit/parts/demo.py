@@ -1,7 +1,7 @@
 # pour un élément du dataset, on obtient sa catégorie prédite par le meilleur modèle pré-entraîné
 # voire aussi grad-cam ?
 
-# import streamlit as st
+import streamlit as st
 # import torch
 # from PIL import Image
 # import numpy as np
@@ -16,8 +16,9 @@
 #     return model
 
 
-# def show_demo():
-#     st.title("🚀 Démo Interactive")
+def show_demo():
+    st.title("🚀 Démo Interactive")
+    st.info("🚧 Section en cours de développement")
 
 #     model = load_model()
 

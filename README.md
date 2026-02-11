@@ -116,11 +116,16 @@ Rakuten
     │   │   └── deep_learning.py : architecture du modèle DL2 de deep learning sur le texte
     │   └── on_text_and_images
     │       └── deep_learning.py : architecture du modèle DL3 de deep learning sur texte et images ; fonctions pour log d'expériences et pour Grad-CAM
-    └── preprocessing
-        ├── core.py : fonctions pour créer ou charger `Dataset2/df.parquet`
-        ├── image.py : fonctions liées aux images (chargement, feature engineering)
-        └── pipelines
-            ├── deep_learning.py : chargement et sauvegarde des préprocesseurs des modèles de deep learning DL1, DL2, DL3
-            ├── deep_learning_on_images.py : preprocessing du modèle DL1 de deep learning sur les images
-            ├── deep_learning_on_text.py : preprocessing du modèle DL2 de deep learning sur le texte
-            └── deep_learning_on_text_and_images.py : preprocessing du modèle DL3 de deep learning sur texte et images
+    │── preprocessing
+    │   ├── core.py : fonctions pour créer ou charger `Dataset2/df.parquet`
+    │   ├── image.py : fonctions liées aux images (chargement, feature engineering)
+    │   └── pipelines
+    │       ├── deep_learning.py : chargement et sauvegarde des préprocesseurs des modèles de deep learning DL1, DL2, DL3
+    │       ├── deep_learning_on_images.py : preprocessing du modèle DL1 de deep learning sur les images
+    │       ├── deep_learning_on_text.py : preprocessing du modèle DL2 de deep learning sur le texte
+    │       └── deep_learning_on_text_and_images.py : preprocessing du modèle DL3 de deep learning sur texte et images
+    └── streamlit
+        ├── app.py : présentation streamlit du projet
+        ├── generate_page.py : script pour générer un nouveau brouillon de fichier dans le dossier `parts`
+        └── parts : pages de la présentation streamlit
+            └── *.py
