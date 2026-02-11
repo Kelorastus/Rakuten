@@ -1,6 +1,6 @@
 # Pour lancer cette application :
-# se placer dans ce dossier `streamlit` puis lancer la commande suivante.
-# streamlit run app.py
+# se placer dans le dossier du repo git puis lancer la commande suivante.
+# streamlit run src/streamlit/app.py
 
 import streamlit as st
 
