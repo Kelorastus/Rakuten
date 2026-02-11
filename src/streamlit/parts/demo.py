@@ -23,15 +23,11 @@ from src.preprocessing.pipelines.deep_learning_on_text_and_images import preproc
 from tensorflow import keras
 
 
-@st.cache_resource
 def preprocessing_DL3(X_test, y_test, row_index=0):
     # parameters
     multimodal_artifacts_folder = Path(f'artifacts/on_text_and_images/deep_learning/v1')
     preprocessors_folder = multimodal_artifacts_folder
-    rebalance_with_weights = True  # True is useful if some classes are ignored by the model. In that case, small_train_sample should be False.
-    augment=False  # If True, augment data for training
     BATCH_SIZE = 32
-    RANDOM_SEED = 42
 
     X_test = X_test.iloc[row_index:row_index+1]
     y_test = y_test.iloc[row_index:row_index+1]
@@ -43,7 +39,7 @@ def preprocessing_DL3(X_test, y_test, row_index=0):
     if new_preprocessors:
         print(f"error: some preprocessors got fitted on the testing set, so they were probably not handled properly. {new_preprocessors=}")
 
-    return test_ds
+    return test_ds, y_test_ohe, preprocessors
 
 
 @st.cache_resource
@@ -59,8 +55,12 @@ def load_dataset():
     return X_train, X_test, y_train, y_test
 
 
-def predict():
-    pass
+def predict_DL3(model, test_ds, y_test_ohe, preprocessors):
+    y_pred = model.predict(test_ds)
+    y_pred_class = preprocessors['target'].inverse_transform(y_pred.argmax(axis=1))
+    y_test_class = preprocessors['target'].inverse_transform(y_test_ohe.argmax(axis=1))
+    #TODO
+    return
 
 
 def show_demo():
