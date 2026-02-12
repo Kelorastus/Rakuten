@@ -112,6 +112,7 @@ def show_demo(small_image_size = 200):
         #TODO: allow refreshing sample
 
     # Product selection
+    st.text("Cocher un produit.")
     #TODO? slider for small_image_size
     event = st.dataframe(st.session_state['sample'],
                  column_config={'image': st.column_config.ImageColumn(width=small_image_size)},
@@ -122,10 +123,10 @@ def show_demo(small_image_size = 200):
     # If user has selected a product
     if event.selection.rows:
         input_index = event.selection.rows[0]
-        st.write("Produit sélectionné :", st.session_state['sample'].iloc[input_index])
         row_index = int(st.session_state['sample'].iloc[input_index].name)  # Convert index from `session_state['sample'].iloc` to `X_test.loc`
         X_test_row = X_test.loc[[row_index]] # dataframe instead of series for tensorflow
         y_test_row = y_test.loc[[row_index]]
+        st.write("Produit sélectionné :", st.session_state['sample'].iloc[input_index])
         st.write(row_index,X_test_row,y_test_row)
 
         # Prediction
@@ -137,12 +138,6 @@ def show_demo(small_image_size = 200):
 
         # TODO: turn this into a table
         st.text(f"Catégorie prédite :\n{y_pred_class} - {y_pred_description}.\n\nCatégorie réelle :\n{y_test_class} - {y_test_description}.")
-
-#     # Sélection d'un échantillon
-#     sample_choice = st.selectbox(
-#         "Choisir un produit du dataset",
-#         ["Exemple 1", "Exemple 2", "Exemple 3", "Upload personnalisé"]
-#     )
 
 #     col1, col2 = st.columns(2)
 
