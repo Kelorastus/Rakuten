@@ -44,7 +44,7 @@ def preprocessing_DL3(X_test, y_test):
     if new_preprocessors:
         print(f"error: some preprocessors got fitted on the testing set, so they were probably not handled properly. {new_preprocessors=}")
 
-    return test_ds, y_test_ohe, preprocessors
+    return test_ds, preprocessors
 
 
 @st.cache_resource
@@ -58,11 +58,10 @@ def np_array_to_int(np_array):
     return int(np_array[0])
 
 
-def predict_DL3(model, test_ds, y_test_ohe, preprocessors):
+def predict_DL3(model, test_ds, preprocessors):
     y_pred = model.predict(test_ds)
     y_pred_class = np_array_to_int(preprocessors['target'].inverse_transform(y_pred.argmax(axis=1)))
-    y_test_class = np_array_to_int(preprocessors['target'].inverse_transform(y_test_ohe.argmax(axis=1)))
-    return y_pred_class, y_test_class
+    return y_pred_class
 
 
 @st.cache_data
@@ -124,15 +123,16 @@ def show_demo(small_image_size = 200):
     if event.selection.rows:
         input_index = event.selection.rows[0]
         row_index = int(st.session_state['sample'].iloc[input_index].name)  # Convert index from `session_state['sample'].iloc` to `X_test.loc`
-        X_test_row = X_test.loc[[row_index]] # dataframe instead of series for tensorflow
-        y_test_row = y_test.loc[[row_index]]
+        X_test_row = X_test.loc[[row_index]]  # Double-bracket: to keep it as a dataframe instead of a series
+        y_test_row = y_test.loc[[row_index]]  # Double-bracket: to keep it as a series
         st.write("Produit sélectionné :", st.session_state['sample'].iloc[input_index])
-        st.write(row_index,X_test_row,y_test_row)
+        st.write(row_index,X_test_row,f"{y_test_row.iloc[0]=} {type(y_test_row)=}")
 
         # Prediction
-        test_ds, y_test_ohe, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
+        test_ds, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
         model = load_model_DL3()
-        y_pred_class, y_test_class = predict_DL3(model, test_ds, y_test_ohe, preprocessors)
+        y_pred_class = predict_DL3(model, test_ds, preprocessors)
+        y_test_class = y_test_row.iloc[0]
         y_pred_description = get_class_description(y_pred_class)
         y_test_description = get_class_description(y_test_class)
 
