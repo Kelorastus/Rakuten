@@ -1,5 +1,6 @@
 # Pour lancer cette application :
-# se placer dans le dossier du repo git puis lancer la commande suivante.
+# se placer dans le dossier du repo git, puis lancer les commandes suivantes.
+# source venv/bin/activate
 # streamlit run src/streamlit/app.py
 
 import streamlit as st
@@ -31,8 +32,9 @@ try:
     from parts.demo import show_demo
 except ImportError as e:
     demo_available = False
+    exc = e  # strangely, `e` is not accessible from `show_demo` but `exc` is
     def show_demo():
-        st.error("🚧 Démo non disponible :\n\n{e}")
+        st.error(f"🚧 Démo non disponible :\n\n{exc}")
 
 # Configuration de la navigation : partie → fonction montrant la partie
 PAGES = {
