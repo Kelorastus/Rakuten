@@ -96,7 +96,7 @@ def get_df_with_images(initial_df):
     return df
 
 
-def show_demo(small_image_size = 100, big_image_size=500):
+def show_demo(small_image_size = 200):
     st.title("🚀 Démo interactive")
     st.info("🚧 Section en cours de développement")
 
@@ -109,7 +109,8 @@ def show_demo(small_image_size = 100, big_image_size=500):
         st.session_state['sample'] = get_df_with_images(sample)
         #TODO: allow refreshing sample
 
-    #TODO: Product selection
+    # Product selection
+    #TODO? slider for small_image_size
     event = st.dataframe(st.session_state['sample'],
                  column_config={'image': st.column_config.ImageColumn(width=small_image_size)},
                  row_height=small_image_size,
@@ -118,13 +119,12 @@ def show_demo(small_image_size = 100, big_image_size=500):
 
     # If user has selected a product
     if event.selection.rows:
-        index = event.selection.rows[0]
-        st.session_state['sample'].iloc[index]
-        st.write("Produit sélectionné :", st.session_state['sample'].iloc[index])
-
-    row_index=0
-    X_test_row = X_test.iloc[row_index:row_index+1] # slice to get dataframe instead of series for tensorflow
-    y_test_row = y_test.iloc[row_index:row_index+1]
+        input_index = event.selection.rows[0]
+        st.write("Produit sélectionné :", st.session_state['sample'].iloc[input_index])
+        row_index = int(st.session_state['sample'].iloc[input_index].name)  # Convert index from `session_state['sample'].iloc` to `X_test.loc`
+        X_test_row = X_test.loc[[row_index]] # dataframe instead of series for tensorflow
+        y_test_row = y_test.loc[[row_index]]
+        st.write(row_index,X_test_row,y_test_row)
 
     # Prediction
     test_ds, y_test_ohe, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
