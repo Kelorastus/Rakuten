@@ -135,11 +135,12 @@ Rakuten
     │       ├── deep_learning_on_images.py : preprocessing du modèle DL1 de deep learning sur les images
     │       ├── deep_learning_on_text.py : preprocessing du modèle DL2 de deep learning sur le texte
     │       └── deep_learning_on_text_and_images.py : preprocessing du modèle DL3 de deep learning sur texte et images
-    └── streamlit
-        ├── app.py : présentation streamlit du projet
-        ├── generate_page.py : script pour générer un nouveau brouillon de fichier dans le dossier `parts`
-        └── parts : pages de la présentation streamlit
-            └── *.py
+    │── streamlit-archive
+    │   ├── app.py : ancienne structure de la présentation streamlit du projet
+    │   ├── generate_page.py : script pour générer un nouveau brouillon de fichier dans le dossier `parts`
+    │   └── parts : pages de la présentation streamlit
+    │       └── *.py
+    └── streamlit.py : présentation streamlit du projet
 ```
 
 # Documents "analyse, feature engineering, preprocess et modelisation..."
