@@ -30,6 +30,7 @@ def load_Dataset2():
     return X_train, X_test, y_train, y_test
 
 
+@st.cache_resource
 def preprocessing_DL3(X_test, y_test):
     # parameters
     multimodal_artifacts_folder = Path(f'artifacts/on_text_and_images/deep_learning/v1')
@@ -64,6 +65,7 @@ def predict_DL3(model, test_ds, y_test_ohe, preprocessors):
     return y_pred_class, y_test_class
 
 
+@st.cache_data
 def get_class_description(class_code: int):
     description = CATEGORY_MAPPING.get(class_code, "inconnue")
     return description
@@ -126,15 +128,15 @@ def show_demo(small_image_size = 200):
         y_test_row = y_test.loc[[row_index]]
         st.write(row_index,X_test_row,y_test_row)
 
-    # Prediction
-    test_ds, y_test_ohe, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
-    model = load_model_DL3()
-    y_pred_class, y_test_class = predict_DL3(model, test_ds, y_test_ohe, preprocessors)
-    y_pred_description = get_class_description(y_pred_class)
-    y_test_description = get_class_description(y_test_class)
+        # Prediction
+        test_ds, y_test_ohe, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
+        model = load_model_DL3()
+        y_pred_class, y_test_class = predict_DL3(model, test_ds, y_test_ohe, preprocessors)
+        y_pred_description = get_class_description(y_pred_class)
+        y_test_description = get_class_description(y_test_class)
 
-    # TODO: turn this into a table
-    st.text(f"Catégorie prédite :\n{y_pred_class} - {y_pred_description}.\n\nCatégorie réelle :\n{y_test_class} - {y_test_description}.")
+        # TODO: turn this into a table
+        st.text(f"Catégorie prédite :\n{y_pred_class} - {y_pred_description}.\n\nCatégorie réelle :\n{y_test_class} - {y_test_description}.")
 
 #     # Sélection d'un échantillon
 #     sample_choice = st.selectbox(
