@@ -99,8 +99,6 @@ def get_df_with_images(initial_df):
 
 def show_demo(small_image_size = 200):
     st.title("🚀 Démo interactive")
-    st.info("🚧 Section en cours de développement")
-
     X_train, X_test, y_train, y_test = load_Dataset2()
 
     # Pick a sample from X_test (because images would use too many resources for the whole X_test)
@@ -121,8 +119,12 @@ def show_demo(small_image_size = 200):
 
     # If user has selected a product
     if event.selection.rows:
+        # Get user selection
         input_index = event.selection.rows[0]
-        row_index = int(st.session_state['sample'].iloc[input_index].name)  # Convert index from `session_state['sample'].iloc` to `X_test.loc`
+
+        # Get proper index (convert index from `session_state['sample'].iloc` to `X_test.loc`)
+        row_index = int(st.session_state['sample'].iloc[input_index].name)
+
         X_test_row = X_test.loc[[row_index]]  # Double-bracket: to keep it as a dataframe instead of a series
         y_test_row = y_test.loc[[row_index]]  # Double-bracket: to keep it as a series
         # st.write("Produit sélectionné :", st.session_state['sample'].iloc[input_index])
@@ -136,19 +138,16 @@ def show_demo(small_image_size = 200):
         y_pred_description = get_class_description(y_pred_class)
         y_test_description = get_class_description(y_test_class)
 
-        # TODO: turn this into a table
-        # st.text(f"Catégorie prédite :\n{y_pred_class} - {y_pred_description}.\n\nCatégorie réelle :\n{y_test_class} - {y_test_description}.")
-
         if y_pred_class == y_test_class:
-            prediction_correctness = "green"
+            prediction_style = "green"
         else:
-            prediction_correctness = "red"
+            prediction_style = "red"
 
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown(f"### catégorie réelle\n{y_test_class} - {y_test_description}.")
+            st.markdown(f"### :green[catégorie réelle]\n:green[{y_test_class} - {y_test_description}.]")
         with col2:
-            st.markdown(f"### :{prediction_correctness}[catégorie prédite]\n:{prediction_correctness}[{y_pred_class} - {y_pred_description}].")
+            st.markdown(f"### :{prediction_style}[catégorie prédite]\n:{prediction_style}[{y_pred_class} - {y_pred_description}.]")
 
     # col1, col2 = st.columns(2)
     # with col1:
