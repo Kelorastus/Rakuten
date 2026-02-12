@@ -5,9 +5,6 @@ idées
 
 générer un échantillon aléatoire du dataset
     ? quand l'utilisateur clique sur un bouton
-le montrer
-    ? st.dataframe
-        ? st.column_config.ImageColumn pour affichage des images
     ? st.data_editor pour permettre à l'utilisateur de modifier l'échantillon
 demander à l'utilisateur de choisir un indice dans l'échantillon
 prédire le produit à cet indice (ou pour tout l'échantillon ?)
@@ -15,14 +12,16 @@ prédire le produit à cet indice (ou pour tout l'échantillon ?)
 ? grad-cam
 """
 
+from tensorflow import keras
 import streamlit as st
+import base64
 from pathlib import Path
+from functools import partial
 from src.preprocessing.image import get_image_path
 from src.models.on_text_and_images.deep_learning import CATEGORY_MAPPING
 from src.preprocessing.core import load_reproducible_split
 from src.preprocessing.pipelines.deep_learning import load_preprocessors
 from src.preprocessing.pipelines.deep_learning_on_text_and_images import preprocess_features
-from tensorflow import keras
 
 
 @st.cache_data
@@ -70,11 +69,47 @@ def get_class_description(class_code: int):
     return description
 
 
+def image_path_to_base64(path: str):
+    with open(path, "rb") as p:
+        file = p.read()
+        return f"data:image/png;base64,{base64.b64encode(file).decode()}"
+
+
+@st.cache_data
+def get_df_with_images(initial_df):
+    df = initial_df.copy()
+    image_getter = partial(get_image_path, folder = 'Dataset/images/image_train')
+    image_paths = df.apply(image_getter, axis=1)
+    df.insert(0, 'image', image_paths)
+    df["image"] = df['image'].apply(image_path_to_base64)
+    return df
+
+
+# for displayed dataframes
+column_config={'image': st.column_config.ImageColumn()}
+# st.markdown("""
+#     <style>
+#         .stTable tr {
+#             height: 500px; # adjust row height
+#         }
+#     </style>
+# """, unsafe_allow_html=True)
+
+
 def show_demo():
     st.title("🚀 Démo interactive")
     st.info("🚧 Section en cours de développement")
 
     X_train, X_test, y_train, y_test = load_Dataset2()
+
+    # Pick a sample from X_test because images would use too many resources for the whole X_test
+    if 'sample' not in st.session_state:
+        sample_size = 10
+        sample = X_test.sample(sample_size)
+        st.session_state['sample'] = get_df_with_images(sample)
+        #TODO: allow refreshing sample
+
+    st.dataframe(st.session_state['sample'], column_config=column_config)
 
     # Product selection
 
@@ -82,9 +117,14 @@ def show_demo():
     X_test_row = X_test.iloc[row_index:row_index+1] # slice to get dataframe instead of series for tensorflow
     y_test_row = y_test.iloc[row_index:row_index+1]
 
+    # Put image into dataframe
+    image_path = get_image_path(X_test_row.iloc[0], folder = 'Dataset/images/image_train')
+    X_test_row.insert(0, 'image', image_path)
+    X_test_row["image"] = X_test_row['image'].apply(image_path_to_base64)
+
     # Show selected product data
     st.text(f"Informations du produit sélectionné :")
-    st.dataframe(X_test_row)
+    st.dataframe(X_test_row, column_config=column_config)
 
     # Show selected product image
     st.text(f"Image du produit :")
