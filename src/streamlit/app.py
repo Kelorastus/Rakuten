@@ -17,6 +17,18 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Reduce sidebar width to gain space for demo
+# st.markdown(
+#     """
+#     <style>
+#         section[data-testid="stSidebar"] {
+#             width: 300px !important; # Set the width to your desired value
+#         }
+#     </style>
+#     """,
+#     unsafe_allow_html=True,
+# )
+
 # Import de toutes les fonctions show_*
 # Une fonction show_* par fichier de préférence, pour faciliter la collaboration
 from parts.problematique import show_problematique
