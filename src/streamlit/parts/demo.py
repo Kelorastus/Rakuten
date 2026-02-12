@@ -119,14 +119,14 @@ def show_demo(small_image_size = 200):
 
     # If user has selected a product
     if event.selection.rows:
-        # Get user selection
+        # Get index of user-selected row
         input_index = event.selection.rows[0]
 
-        # Get proper index (convert index from `session_state['sample'].iloc` to `X_test.loc`)
+        # Get user-selected row at proper index (convert index from `session_state['sample'].iloc` to `X_test.loc`)
         row_index = int(st.session_state['sample'].iloc[input_index].name)
-
         X_test_row = X_test.loc[[row_index]]  # Double-bracket: to keep it as a dataframe instead of a series
         y_test_row = y_test.loc[[row_index]]  # Double-bracket: to keep it as a series
+
         # st.write("Produit sélectionné :", st.session_state['sample'].iloc[input_index])
         # st.write(row_index,X_test_row,f"{y_test_row.iloc[0]=} {type(y_test_row)=}")
 
@@ -138,6 +138,7 @@ def show_demo(small_image_size = 200):
         y_pred_description = get_class_description(y_pred_class)
         y_test_description = get_class_description(y_test_class)
 
+        # Display prediction
         if y_pred_class == y_test_class:
             prediction_style = "green"
         else:
