@@ -18,7 +18,7 @@ import base64
 from pathlib import Path
 from functools import partial
 from src.preprocessing.image import get_image_path
-from src.models.on_text_and_images.deep_learning import CATEGORY_MAPPING
+from src.models.on_text_and_images.deep_learning import CATEGORY_MAPPING, grad_cam
 from src.preprocessing.core import load_reproducible_split
 from src.preprocessing.pipelines.deep_learning import load_preprocessors
 from src.preprocessing.pipelines.deep_learning_on_text_and_images import preprocess_features
@@ -97,9 +97,9 @@ def get_df_with_images(initial_df):
     return df
 
 
-def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_encoder, target_encoder, save_plot=False, category_mapping=CATEGORY_MAPPING):
+def get_grad_cam_images(inputs_batch_dict, model, conv_layers):
     """
-    Affiche les images originales, leurs métadonnées et les Grad-CAM.
+    Retourne l'image originale et les images Grad-CAM.
 
     Args:
         inputs_batch_dict: Le batch d'entrées (dictionnaire).
@@ -109,91 +109,28 @@ def show_grad_cam_cnn(inputs_batch_dict, model, conv_layers, true_labels, hash_e
         hash_encoder: L'OrdinalEncoder pour décoder les MD5.
         target_encoder: Le LabelEncoder pour décoder les classes (Int -> String).
         category_mapping: dict describing classes.
-        save_plot: Booléen pour sauvegarder l'image.
     """
-    # On déduit le nombre d'images via une des clés
-    number_of_images = inputs_batch_dict['image_input'].shape[0]
-    hashes = []
+    original_image = inputs_batch_dict['image_input'][0].numpy().astype("uint8")
+    grad_cam_images = {}
+    grad_cam_images['original'] = original_image
 
-    plt.figure(figsize=(16, 4 * (len(conv_layers) + 1)))
+    for layer_name in conv_layers:
+        # On isole un échantillon unique pour grad_cam
+        single_sample = {key: value[0] for key, value in inputs_batch_dict.items()}
+        try:
+            grad_cam_image, predicted_index = grad_cam(single_sample, model, layer_name)
+            grad_cam_images[layer_name] = grad_cam_image
+        except Exception as e:
+            st.text(f"Erreur sur {layer_name}:\n{e}")
 
-    # --- ROW 0 : Original Images + Metadata ---
-    for i in range(number_of_images):
-        plt.subplot(len(conv_layers) + 1, number_of_images, i + 1)
-
-        # Display Image
-        img_display = inputs_batch_dict['image_input'][i].numpy().astype("uint8")
-        plt.imshow(img_display)
-
-        # Decode MD5 (Integer -> String)
-        encoded_val = int(inputs_batch_dict['md5_input'][i])
-        if encoded_val == -1:
-            md5_str = "Unknown"
-        else:
-            md5_str = hash_encoder.categories_[1][encoded_val]
-        hashes.append(md5_str)
-
-        # Decode True Label (One-Hot -> Class Name)
-        # true_labels[i] est un vecteur [0, 0, 1, 0...]. On cherche l'index du 1.
-        true_index = np.argmax(true_labels[i])
-        class_code = target_encoder.classes_[true_index] # e.g. 2583
-
-        # Get description from dict (Handle potential missing keys safely)
-        # We assume class_code is the same type as keys in category_mapping (int)
-        class_desc = category_mapping.get(int(class_code), "Unknown")
-
-        # Shorten description if too long for title
-        # if len(class_desc) > 30:
-        #     class_desc = class_desc[:27] + "..."
-
-        plt.title(f"True: {class_code}\n{class_desc}", fontsize=9)
-        plt.axis("off")
-
-    # --- ROWS 1 to N : Grad-CAM ---
-    for j, layer_name in enumerate(conv_layers):
-        for i in range(number_of_images):
-
-            # On isole un échantillon unique pour grad_cam
-            single_sample = {key: value[i] for key, value in inputs_batch_dict.items()}
-
-            subplot_index = i + 1 + (j + 1) * number_of_images
-            plt.subplot(len(conv_layers) + 1, number_of_images, subplot_index)
-
-            try:
-                grad_cam_image, predicted_index = grad_cam(single_sample, model, layer_name)
-
-                pred_code = target_encoder.classes_[predicted_index]
-                pred_desc = category_mapping.get(int(pred_code), "Unknown") # <--- Get Description
-
-                # if len(pred_desc) > 20: pred_desc = pred_desc[:17] + "..."
-
-                plt.imshow(grad_cam_image)
-
-                true_index = np.argmax(true_labels[i])
-                color = 'green' if predicted_index == true_index else 'red'
-
-                # Update Title with description
-                plt.title(f'{layer_name}\nPredicted: {pred_code}\n{pred_desc}', color=color, fontsize=8)
-
-            except Exception as e:
-                print(f"Erreur sur {layer_name} image {i}: {e}")
-                plt.text(0.5, 0.5, "Error", ha='center', va='center')
-
-            plt.axis("off")
-
-    plt.tight_layout()
-
-    if save_plot:
-        timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        plt.savefig(f"gradcam_{timestamp}.png", dpi=300, bbox_inches='tight')
-        print(f"Plot saved as gradcam_{timestamp}.png")
-
-    plt.show()
-
-    return hashes
+    return grad_cam_images
 
 
-def show_demo(small_image_size = 200):
+def reset_sample():
+    del st.session_state['sample']
+
+
+def show_demo(small_image_size = 100):
     st.title("🚀 Démo interactive")
     X_train, X_test, y_train, y_test = load_Dataset2()
 
@@ -202,14 +139,18 @@ def show_demo(small_image_size = 200):
         sample_size = 10
         sample = X_test.sample(sample_size)
         st.session_state['sample'] = get_df_with_images(sample)
-        #TODO: allow refreshing sample
 
     # Product selection
-    st.text("Veuillez cocher un produit à catégoriser par le modèle.\nPour consulter les détails des produits, faire défiler le tableau horizontalement/verticalement.")
-    #TODO? slider for small_image_size
+    st.markdown(f"## Choix du produit")
+    st.markdown(f"Veuillez cocher un produit à catégoriser par le modèle DL3.\nPour consulter les détails des produits, vous pouvez faire défiler le tableau horizontalement/verticalement, ou le mettre en plein écran.")
+
+    # Allow refreshing sample
+    st.button("Regénérer les produits", on_click=reset_sample)
+
     event = st.dataframe(st.session_state['sample'],
                  column_config={'image': st.column_config.ImageColumn(width=small_image_size)},
                  row_height=small_image_size,
+                 height=400,
                  on_select="rerun",
                  selection_mode="single-row")
 
@@ -235,16 +176,34 @@ def show_demo(small_image_size = 200):
         y_test_description = get_class_description(y_test_class)
 
         # Display prediction
+        # st.markdown(f"## Prédiction")
         if y_pred_class == y_test_class:
             prediction_style = "green"
         else:
             prediction_style = "red"
 
-        col1, col2 = st.columns(2)
+        _, col1, col2, _ = st.columns(4)
         with col1:
-            st.markdown(f"### :green[catégorie réelle]\n:green[{y_test_class} - {y_test_description}.]")
+            st.markdown(f"### :green[vraie catégorie]\n:green[{y_test_class} - {y_test_description}.]")
         with col2:
-            st.markdown(f"### :{prediction_style}[catégorie prédite]\n:{prediction_style}[{y_pred_class} - {y_pred_description}.]")
+            st.markdown(f"### :{prediction_style}[prédiction]\n:{prediction_style}[{y_pred_class} - {y_pred_description}.]")
+
+        # Grad-CAM
+
+        st.markdown(f"## Interprétation Grad-CAM")
+        for inputs_dict, labels_batch in test_ds: # type: ignore
+            labels = labels_batch.numpy() #.argmax(axis=1)
+            break
+
+        # st.write(inputs_dict.keys(), labels.shape) # type: ignore
+        selected_layers=['block3b_project_conv', 'block5e_project_conv', 'top_conv']  # manual selection of layers
+        grad_cam_images = get_grad_cam_images(inputs_dict, model, selected_layers)  # type: ignore
+        cols = st.columns(len(grad_cam_images))
+        for k, (layer, grad_cam_image) in enumerate(grad_cam_images.items()):
+            with cols[k]:
+                # st.markdown(f"<div style='text-align: center'>{selected_layers[k]}</div>", unsafe_allow_html=True)
+                st.image(grad_cam_image, caption=f"{layer}")
+
 
     # col1, col2 = st.columns(2)
     # with col1:
