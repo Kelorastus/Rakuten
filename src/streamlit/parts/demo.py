@@ -120,21 +120,11 @@ def show_demo(small_image_size = 100, big_image_size=500):
     if event.selection.rows:
         index = event.selection.rows[0]
         st.session_state['sample'].iloc[index]
-        st.write(st.session_state['sample'].iloc[index])
+        st.write("Produit sélectionné :", st.session_state['sample'].iloc[index])
 
     row_index=0
     X_test_row = X_test.iloc[row_index:row_index+1] # slice to get dataframe instead of series for tensorflow
     y_test_row = y_test.iloc[row_index:row_index+1]
-
-    # Put image into dataframe
-    image_path = get_image_path(X_test_row.iloc[0], folder = 'Dataset/images/image_train')
-    X_test_row.insert(0, 'image', image_path)
-    X_test_row["image"] = X_test_row['image'].apply(image_path_to_base64)
-
-    st.text(f"Produit sélectionné :")
-
-    # Show selected product data
-    st.dataframe(X_test_row, column_config={'image': st.column_config.ImageColumn(width=big_image_size)}, row_height=big_image_size)
 
     # Prediction
     test_ds, y_test_ohe, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
