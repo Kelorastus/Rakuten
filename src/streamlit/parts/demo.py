@@ -1,17 +1,3 @@
-# pour un élément du dataset, on obtient sa catégorie prédite par le meilleur modèle pré-entraîné
-
-"""
-idées
-
-générer un échantillon aléatoire du dataset
-    ? quand l'utilisateur clique sur un bouton
-    ? st.data_editor pour permettre à l'utilisateur de modifier l'échantillon
-demander à l'utilisateur de choisir un indice dans l'échantillon
-prédire le produit à cet indice (ou pour tout l'échantillon ?)
-    ? quand l'utilisateur clique sur un bouton
-? grad-cam
-"""
-
 from tensorflow import keras
 import streamlit as st
 import base64
@@ -130,18 +116,17 @@ def reset_sample():
     del st.session_state['sample']
 
 
-def show_demo(small_image_size = 100):
+def show_demo(sample_size = 15, small_image_size = 100):
     st.title("🚀 Démo interactive")
     X_train, X_test, y_train, y_test = load_Dataset2()
 
     # Pick a sample from X_test (because images would use too many resources for the whole X_test)
     if 'sample' not in st.session_state:
-        sample_size = 10
         sample = X_test.sample(sample_size)
         st.session_state['sample'] = get_df_with_images(sample)
 
     # Product selection
-    st.markdown(f"## Choix du produit")
+    # st.markdown(f"## Choix du produit")
     st.markdown(f"Veuillez cocher un produit à catégoriser par le modèle DL3.\nPour consulter les détails des produits, vous pouvez faire défiler le tableau horizontalement/verticalement, ou le mettre en plein écran.")
 
     # Allow refreshing sample
@@ -150,7 +135,7 @@ def show_demo(small_image_size = 100):
     event = st.dataframe(st.session_state['sample'],
                  column_config={'image': st.column_config.ImageColumn(width=small_image_size)},
                  row_height=small_image_size,
-                 height=400,
+                #  height=400,  # when specified, hinders full screen mode
                  on_select="rerun",
                  selection_mode="single-row")
 
