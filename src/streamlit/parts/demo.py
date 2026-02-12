@@ -69,6 +69,17 @@ def get_class_description(class_code: int):
     return description
 
 
+def show_image_from_row(row):
+    # e.g. row = X_test.iloc[0]
+    image_path = get_image_path(row, folder = 'Dataset/images/image_train')
+    if image_path.exists():
+        st.image(image_path)
+    else:
+        st.text(f"Error: file not found: {image_path=}")
+        st.text(f"cwd: {Path('.').resolve()}")
+        st.text(f"folder: {image_path.parent.resolve()}")
+
+
 def image_path_to_base64(path: str):
     with open(path, "rb") as p:
         file = p.read()
@@ -85,35 +96,33 @@ def get_df_with_images(initial_df):
     return df
 
 
-# for displayed dataframes
-column_config={'image': st.column_config.ImageColumn()}
-# st.markdown("""
-#     <style>
-#         .stTable tr {
-#             height: 500px; # adjust row height
-#         }
-#     </style>
-# """, unsafe_allow_html=True)
-
-
-def show_demo():
+def show_demo(small_image_size = 100, big_image_size=500):
     st.title("🚀 Démo interactive")
     st.info("🚧 Section en cours de développement")
 
     X_train, X_test, y_train, y_test = load_Dataset2()
 
-    # Pick a sample from X_test because images would use too many resources for the whole X_test
+    # Pick a sample from X_test (because images would use too many resources for the whole X_test)
     if 'sample' not in st.session_state:
         sample_size = 10
         sample = X_test.sample(sample_size)
         st.session_state['sample'] = get_df_with_images(sample)
         #TODO: allow refreshing sample
 
-    st.dataframe(st.session_state['sample'], column_config=column_config)
+    #TODO: Product selection
+    event = st.dataframe(st.session_state['sample'],
+                 column_config={'image': st.column_config.ImageColumn(width=small_image_size)},
+                 row_height=small_image_size,
+                 on_select="rerun",
+                 selection_mode="single-row")
 
-    # Product selection
+    # If user has selected a product
+    if event.selection.rows:
+        index = event.selection.rows[0]
+        st.session_state['sample'].iloc[index]
+        st.write(st.session_state['sample'].iloc[index])
 
-    row_index=0 #TODO: user-picked
+    row_index=0
     X_test_row = X_test.iloc[row_index:row_index+1] # slice to get dataframe instead of series for tensorflow
     y_test_row = y_test.iloc[row_index:row_index+1]
 
@@ -122,19 +131,10 @@ def show_demo():
     X_test_row.insert(0, 'image', image_path)
     X_test_row["image"] = X_test_row['image'].apply(image_path_to_base64)
 
-    # Show selected product data
-    st.text(f"Informations du produit sélectionné :")
-    st.dataframe(X_test_row, column_config=column_config)
+    st.text(f"Produit sélectionné :")
 
-    # Show selected product image
-    st.text(f"Image du produit :")
-    image_path = get_image_path(X_test_row.iloc[0], folder = 'Dataset/images/image_train')
-    if image_path.exists():
-        st.image(image_path)
-    else:
-        st.text(f"Error: file not found: {image_path=}")
-        st.text(f"cwd: {Path('.').resolve()}")
-        st.text(f"folder: {image_path.parent.resolve()}")
+    # Show selected product data
+    st.dataframe(X_test_row, column_config={'image': st.column_config.ImageColumn(width=big_image_size)}, row_height=big_image_size)
 
     # Prediction
     test_ds, y_test_ohe, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
