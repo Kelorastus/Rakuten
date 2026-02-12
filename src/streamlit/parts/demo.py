@@ -111,7 +111,7 @@ def show_demo(small_image_size = 200):
         #TODO: allow refreshing sample
 
     # Product selection
-    st.text("Cocher un produit.")
+    st.text("Veuillez cocher un produit à catégoriser par le modèle.\nPour consulter les détails des produits, faire défiler le tableau horizontalement/verticalement.")
     #TODO? slider for small_image_size
     event = st.dataframe(st.session_state['sample'],
                  column_config={'image': st.column_config.ImageColumn(width=small_image_size)},
@@ -125,8 +125,8 @@ def show_demo(small_image_size = 200):
         row_index = int(st.session_state['sample'].iloc[input_index].name)  # Convert index from `session_state['sample'].iloc` to `X_test.loc`
         X_test_row = X_test.loc[[row_index]]  # Double-bracket: to keep it as a dataframe instead of a series
         y_test_row = y_test.loc[[row_index]]  # Double-bracket: to keep it as a series
-        st.write("Produit sélectionné :", st.session_state['sample'].iloc[input_index])
-        st.write(row_index,X_test_row,f"{y_test_row.iloc[0]=} {type(y_test_row)=}")
+        # st.write("Produit sélectionné :", st.session_state['sample'].iloc[input_index])
+        # st.write(row_index,X_test_row,f"{y_test_row.iloc[0]=} {type(y_test_row)=}")
 
         # Prediction
         test_ds, preprocessors = preprocessing_DL3(X_test_row, y_test_row)
@@ -137,31 +137,39 @@ def show_demo(small_image_size = 200):
         y_test_description = get_class_description(y_test_class)
 
         # TODO: turn this into a table
-        st.text(f"Catégorie prédite :\n{y_pred_class} - {y_pred_description}.\n\nCatégorie réelle :\n{y_test_class} - {y_test_description}.")
+        # st.text(f"Catégorie prédite :\n{y_pred_class} - {y_pred_description}.\n\nCatégorie réelle :\n{y_test_class} - {y_test_description}.")
 
-#     col1, col2 = st.columns(2)
+        if y_pred_class == y_test_class:
+            prediction_correctness = "green"
+        else:
+            prediction_correctness = "red"
 
-#     with col1:
-#         st.subheader("Entrées")
-#         image = st.file_uploader("Image du produit", type=["jpg", "png"])
-#         texte = st.text_area("Description", "Description du produit...")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(f"### catégorie réelle\n{y_test_class} - {y_test_description}.")
+        with col2:
+            st.markdown(f"### :{prediction_correctness}[catégorie prédite]\n:{prediction_correctness}[{y_pred_class} - {y_pred_description}].")
 
-#         if st.button("🔮 Prédire"):
-#             # Votre code de prédiction
-#             prediction = faire_prediction(model, image, texte)
-#             st.session_state['prediction'] = prediction
+    # col1, col2 = st.columns(2)
+    # with col1:
+    #         image = st.file_uploader("Image du produit", type=["jpg", "png"])
+    #         texte = st.text_area("Description", "Description du produit...")
 
-#     with col2:
-#         st.subheader("Résultats")
-#         if 'prediction' in st.session_state:
-#             pred = st.session_state['prediction']
-#             st.success(f"Catégorie prédite : **{pred['categorie']}**")
-#             st.metric("Confiance", f"{pred['confiance']:.2%}")
+    #         if st.button("🔮 Prédire"):
+    #             # Votre code de prédiction
+    #             prediction = faire_prediction(model, image, texte)
+    #             st.session_state['prediction'] = prediction
+    # with col2:
+    #         st.subheader("Résultats")
+    #         if 'prediction' in st.session_state:
+    #             pred = st.session_state['prediction']
+    #             st.success(f"Catégorie prédite : **{pred['categorie']}**")
+    #             st.metric("Confiance", f"{pred['confiance']:.2%}")
 
-#             # Top 3 prédictions
-#             st.write("Top 3 catégories :")
-#             for i, (cat, prob) in enumerate(pred['top3']):
-#                 st.progress(prob, text=f"{i+1}. {cat} ({prob:.1%})")
+    #             # Top 3 prédictions
+    #             st.write("Top 3 catégories :")
+    #             for i, (cat, prob) in enumerate(pred['top3']):
+    #                 st.progress(prob, text=f"{i+1}. {cat} ({prob:.1%})")
 
 
 # def show_grad_cam():
