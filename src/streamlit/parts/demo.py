@@ -116,7 +116,7 @@ def reset_sample():
     del st.session_state['sample']
 
 
-def show_demo(sample_size = 15, small_image_size = 100):
+def show_demo(sample_size = 15,  image_size = 100):
     st.header("🚀 Démo interactive DL3")
     X_train, X_test, y_train, y_test = load_Dataset2()
 
@@ -126,15 +126,22 @@ def show_demo(sample_size = 15, small_image_size = 100):
         st.session_state['sample'] = get_df_with_images(sample)
 
     # Product selection
+
     # st.markdown(f"## Choix du produit")
     st.markdown(f"Veuillez cocher un produit à catégoriser par le modèle multimodal DL3.\nPour consulter les détails des produits, vous pouvez faire défiler le tableau horizontalement/verticalement, ou le mettre en plein écran.")
 
-    # Allow refreshing sample
-    st.button("Regénérer les produits", on_click=reset_sample)
+    cols = st.columns([1,2,1,9])
+    with cols[1]:
+        # Allow refreshing sample
+        st.button("Regénérer les produits", on_click=reset_sample)
+    with cols[-1]:
+        # Allow resizing dataframe rows
+        image_size = st.slider("Taille des images", 45, 500, 100)
+
 
     event = st.dataframe(st.session_state['sample'],
-                 column_config={'image': st.column_config.ImageColumn(width=small_image_size)},
-                 row_height=small_image_size,
+                 column_config={'image': st.column_config.ImageColumn(width= image_size)},
+                 row_height= image_size,
                 #  height=400,  # when specified, hinders full screen mode
                  on_select="rerun",
                  selection_mode="single-row")
