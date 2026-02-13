@@ -117,7 +117,7 @@ def reset_sample():
 
 
 def show_demo(sample_size = 15, small_image_size = 100):
-    st.title("🚀 Démo interactive")
+    st.header("🚀 Démo interactive")
     X_train, X_test, y_train, y_test = load_Dataset2()
 
     # Pick a sample from X_test (because images would use too many resources for the whole X_test)
@@ -169,9 +169,9 @@ def show_demo(sample_size = 15, small_image_size = 100):
 
         _, col1, col2, _ = st.columns(4)
         with col1:
-            st.markdown(f"### :green[vraie catégorie]\n:green[{y_test_class} - {y_test_description}.]")
+            st.markdown(f"### :green[catégorie]\n:green[{y_test_class} - {y_test_description}]")
         with col2:
-            st.markdown(f"### :{prediction_style}[prédiction]\n:{prediction_style}[{y_pred_class} - {y_pred_description}.]")
+            st.markdown(f"### :{prediction_style}[prédiction]\n:{prediction_style}[{y_pred_class} - {y_pred_description}]")
 
         # Grad-CAM
 
@@ -196,7 +196,6 @@ def show_demo(sample_size = 15, small_image_size = 100):
     #         texte = st.text_area("Description", "Description du produit...")
 
     #         if st.button("🔮 Prédire"):
-    #             # Votre code de prédiction
     #             prediction = faire_prediction(model, image, texte)
     #             st.session_state['prediction'] = prediction
     # with col2:
@@ -210,25 +209,6 @@ def show_demo(sample_size = 15, small_image_size = 100):
     #             st.write("Top 3 catégories :")
     #             for i, (cat, prob) in enumerate(pred['top3']):
     #                 st.progress(prob, text=f"{i+1}. {cat} ({prob:.1%})")
-
-
-# def show_grad_cam():
-#     st.title("📈 Analyse avec Grad-CAM")
-
-#     st.markdown("""
-#     Grad-CAM permet de visualiser les zones de l'image
-#     qui ont influencé la décision du modèle.
-#     """)
-
-#     if 'prediction' in st.session_state:
-#         # Grad-CAM simplifié
-#         col1, col2 = st.columns(2)
-#         with col1:
-#             st.image("image_originale.jpg", caption="Image originale")
-#         with col2:
-#             st.image("gradcam_overlay.jpg", caption="Grad-CAM")
-#     else:
-#         st.info("Faites d'abord une prédiction dans la démo")
 
 
 # Si exécuté directement (pour tester)

@@ -12,7 +12,7 @@ repo_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
 st.set_page_config(
-    page_title="Rakuten - Catégorisation Multi-modale",
+    page_title="Projet Rakuten - catégorisation multi-modale",
     layout="wide",
     initial_sidebar_state="expanded"
 )
