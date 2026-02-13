@@ -182,9 +182,9 @@ def show_demo(sample_size = 15, small_image_size = 100):
 
         _, col1, col2, _ = st.columns(4)
         with col1:
-            st.markdown(f"### :green[catégorie]\n:green[{y_test_class} - {y_test_description}.]")
+            st.markdown(f"### :green[catégorie]\n:green[{y_test_class} - {y_test_description}]")
         with col2:
-            st.markdown(f"### :{prediction_style}[prédiction]\n:{prediction_style}[{y_pred_class} - {y_pred_description}.]")
+            st.markdown(f"### :{prediction_style}[prédiction]\n:{prediction_style}[{y_pred_class} - {y_pred_description}]")
 
         # Grad-CAM
 
