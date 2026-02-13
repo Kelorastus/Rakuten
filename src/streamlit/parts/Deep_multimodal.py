@@ -11,21 +11,21 @@ def show_Deep_multimodal():
 **ResNet50 (Image)**
 
 **Source** : Torchvision (PyTorch)
-                
+
 **Pré-entraîné sur** : ImageNet (1.2M images, 1000 classes)
-                
+
 **Architecture** : 50 couches profondes (Residual Network)
-                
+
 **Poids** : ~98 MB
-                
+
 **Utilisation** : Extraction de features visuelles (2048 dimensions)
 """)
 
     st.markdown("""
 **BERT Tokenizer (Texte)**
-                
+
 **Source** : HuggingFace Transformers
-                
+
 **Modèle** : BERT Multilingue (104 langues)
 **Vocabulaire** : ~119,547 tokens
 **Utilisation** : Tokenisation du texte (convertit mots → indices))
@@ -35,7 +35,7 @@ def show_Deep_multimodal():
 **Branche Image (CNN)**
 
 **Type** : Convolutional Neural Network
-                
+
 **Entrée** : Images 128×128×3 (RGB)
 
 **Sortie** : Vecteur de 2048 features
@@ -54,10 +54,10 @@ def show_Deep_multimodal():
 
 
 **Entrée** : Concaténation image (2048) + texte (128) = 2176
-                
+
 **Sortie** : Probabilités par classe)
 """)
-    
+
     st.title("TECHNIQUES D'OPTIMISATION")
     st.markdown("""
 **Optimiseur**
@@ -65,27 +65,27 @@ def show_Deep_multimodal():
 **Algorithme** : Adam (Adaptive Moment Estimation)
 
 **Learning Rate** : 0.0001
-                
+
 **Usage** : Met à jour les poids pour minimiser la perte
 
 **Fonction de Perte**
 
 **Type** : Cross-Entropy (classification multiclasse)
-                
+
 **Usage** : Mesure l'écart entre prédictions et vraies classes
 
 **Mixed Precision Training**
 
 **Technique** : Automatic Mixed Precision (AMP)
-                
+
 **Usage** : Utilise float16 au lieu de float32
-                
+
 **Bénéfice** : 2× plus rapide + économie de VRAM
 
 **Régularisation**
 
 **Technique** : Dropout (désactive 30% des neurones aléatoirement)
-                
+
 **Usage** : Prévient le surapprentissage (overfitting))
 """)
     st.title("PREPROCESSING & DATA AUGMENTATION")
@@ -93,7 +93,7 @@ def show_Deep_multimodal():
 **Transformations d'Images**
 
 - Redimensionnement** : 128×128 pixels
-                
+
 - Conversion en tenseur [0,1]
 - Normalisation ImageNet (mean/std standardisés)
 
@@ -102,11 +102,11 @@ def show_Deep_multimodal():
 **Tokenisation de Texte**
 
 - Troncature à 64 tokens maximum
-                
+
 - Padding automatique
-                
+
 - Conversion texte → indices numériques
-                
+
 **Source** : HuggingFace Transformers
 """)
 
@@ -115,13 +115,13 @@ def show_Deep_multimodal():
 **Dataset PyTorch**
 
 **Type** : Custom Dataset multimodal
-                
+
 **Usage** : Charge images + texte de façon lazy (à la demande)
 
 **DataLoader**
 
 **Mini-batches** : 64 exemples par batch
-                
+
 **Shuffle** : Mélange les données à chaque epoch
 
 **Usage** : Pipeline d'entraînement efficace
@@ -129,15 +129,15 @@ def show_Deep_multimodal():
 **Train/Val Split**
 
 **Source** : Scikit-learn
-                
+
 **Répartition** : 90% train / 10% validation
-                
+
 **Stratification** : Préserve la distribution des classes)
 """)
-    
+
     st.title("Résultats après entrainement :")
-    st.image(r"C:\Users\user\Documents\Rakuten\Rakuten\src\streamlit\images\rapport de classification DL.png")
-    st.image(r"C:\Users\user\Documents\Rakuten\Rakuten\src\streamlit\images\confusion matrix dl.png")
+    st.image(r"src\streamlit\images\rapport de classification DL.png")
+    st.image(r"src\streamlit\images\confusion matrix dl.png")
     st.markdown("""
 **Résumé des performances du modèle :**
 
