@@ -127,7 +127,7 @@ def show_demo(sample_size = 15, small_image_size = 100):
 
     # Product selection
     # st.markdown(f"## Choix du produit")
-    st.markdown(f"Veuillez cocher un produit à catégoriser par le modèle DL3.\nPour consulter les détails des produits, vous pouvez faire défiler le tableau horizontalement/verticalement, ou le mettre en plein écran.")
+    st.markdown(f"Veuillez cocher un produit à catégoriser par le modèle multimodal DL3.\nPour consulter les détails des produits, vous pouvez faire défiler le tableau horizontalement/verticalement, ou le mettre en plein écran.")
 
     # Allow refreshing sample
     st.button("Regénérer les produits", on_click=reset_sample)
