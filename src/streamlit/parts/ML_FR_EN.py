@@ -4,7 +4,7 @@ import streamlit as st
 
 
 def show_ML_FR_EN():
-    st.title("Machine_Learning_en_français_et_anglais \U0001F1EB\U0001F1F7 \U0001F1EC\U0001F1E7")
+    st.title("Machine Learning en français et anglais \U0001F1EB\U0001F1F7 \U0001F1EC\U0001F1E7")
     st.title("📊 Visualisation des Données")
 
     st.markdown("**Visualisation du Dataframe en français et en anglais**")

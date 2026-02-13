@@ -117,7 +117,7 @@ def reset_sample():
 
 
 def show_demo(sample_size = 15, small_image_size = 100):
-    st.header("🚀 Démo interactive")
+    st.header("🚀 Démo interactive DL3")
     X_train, X_test, y_train, y_test = load_Dataset2()
 
     # Pick a sample from X_test (because images would use too many resources for the whole X_test)

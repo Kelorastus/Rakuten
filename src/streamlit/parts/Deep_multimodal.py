@@ -4,7 +4,7 @@ import streamlit as st
 
 
 def show_Deep_multimodal():
-    st.title("Deep_multimodal")
+    st.title("Deep multimodal")
     st.markdown("Cette section détaille les résultats d'une experimentation de transfert learning multimodal avec Pytorch. Les caractèristiques techniques sont les suivantes :")
     st.title("MODÈLES PRÉ-ENTRAÎNÉS (Transfer Learning)")
     st.markdown("""
