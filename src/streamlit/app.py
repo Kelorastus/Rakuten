@@ -18,6 +18,8 @@ from parts.preprocessing import show_preprocessing
 from parts.models import show_models
 from parts.analyse_meilleur_modele import show_analyse_meilleur_modele
 from parts.conclusion import show_conclusion
+from parts.ML_FR_EN import show_ML_FR_EN
+from parts.Deep_multimodal import show_Deep_multimodal
 
 # Handle the possibility that loading demo fails because of missing dependencies (tensorflow, ...)
 demo_available = True
@@ -38,6 +40,8 @@ PAGES = {
     "🚀 Démo interactive": show_demo,
     "📈 Analyse du meilleur modèle": show_analyse_meilleur_modele,
     "🎓 Conclusion & perspectives": show_conclusion,
+    "Machine_Learning_en_français_et_anglais": show_ML_FR_EN,
+    "Deep_multimodal": show_Deep_multimodal,
 }
 
 st.sidebar.title("Projet Rakuten")
