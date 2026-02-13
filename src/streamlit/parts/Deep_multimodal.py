@@ -136,8 +136,8 @@ def show_Deep_multimodal():
 """)
 
     st.title("Résultats après entrainement :")
-    st.image(r"src\streamlit\images\rapport de classification DL.png")
-    st.image(r"src\streamlit\images\confusion matrix dl.png")
+    st.image(r"src/streamlit/images/rapport de classification DL.png")
+    st.image(r"src/streamlit/images/confusion matrix dl.png")
     st.markdown("""
 **Résumé des performances du modèle :**
 
