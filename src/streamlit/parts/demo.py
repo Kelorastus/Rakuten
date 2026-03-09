@@ -116,7 +116,7 @@ def reset_sample():
     del st.session_state['sample']
 
 
-def show_demo(sample_size = 15,  image_size = 100):
+def show_demo(sample_size = 120,  image_size = 100):
     st.header("🚀 Démo interactive DL3")
     X_train, X_test, y_train, y_test = load_Dataset2()
 
